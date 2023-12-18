@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { NFC, NFCOriginal, Ndef, NdefOriginal } from '@awesome-cordova-plugins/nfc';
+
 
 @Component({
   selector: 'app-tab1',
@@ -7,6 +9,18 @@ import { Component } from '@angular/core';
 })
 export class Tab1Page {
 
-  constructor() {}
+  constructor(private nfc: NFCOriginal, private ndef: NdefOriginal) {}
 
+  test() {
+    var message = [
+      this.ndef.textRecord("hello, world")
+    ];
+    this.nfc.share(message).then(res => {
+      console.log(res);
+    }, err => this.doErr(err));
+  }
+
+  doErr(err: any) {
+    console.error(err);
+  }
 }
