@@ -10,6 +10,7 @@ import { ToastController } from '@ionic/angular';
 })
 export class Tab1Page {
 
+  tag_id: string = '';
   tag_info: any;
   readerMode$: any;
   discoveredListenerSub$: any;
@@ -49,9 +50,9 @@ export class Tab1Page {
     let flags = this.nfc.FLAG_READER_NFC_A | this.nfc.FLAG_READER_NFC_V;
     this.readerMode$ = this.nfc.readerMode(flags).subscribe(
       tag => {
-        // this.nfc.bytesToHexString(tag.id!.reverse());
         this.tag_info = tag;
-        // this.present_toast(`Reader Mode: ${tag}`, "top", "bg-success");
+        this.tag_id = this.nfc.bytesToHexString(this.tag_info.id.reverse());
+        this.present_toast(`NFC detected: Tag ID:: ${this.tag_id}`, "top", "bg-success");
       }, err => {
         this.present_toast(`Failed to start NFC reader mode, error: ${err}`, "top", "bg-danger");
       }
@@ -60,7 +61,7 @@ export class Tab1Page {
 
   start_nfc_listener() {
     this.discoveredListenerSub$ = this.nfc.addTagDiscoveredListener(() => {
-      // Do nothing
+      
     }, (err: any) => {
       this.present_toast(`Error attaching tag discovered listener: ${err}`, "bottom", 'bg-danger');
     }).subscribe(event => {
