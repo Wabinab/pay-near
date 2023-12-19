@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { NFC, Ndef } from '@awesome-cordova-plugins/nfc/ngx';
 import { ToastController } from '@ionic/angular';
 
@@ -15,17 +15,17 @@ export class Tab1Page {
   readerMode$: any;
   discoveredListenerSub$: any;
 
-  constructor(private nfc: NFC, private ndef: Ndef, 
+  constructor(private nfc: NFC, private ndef: Ndef, private cd: ChangeDetectorRef,
     private toastCtrl: ToastController) {}
 
-  test_as_sharer() {
-    var message = [
-      this.ndef.textRecord("hello, world")
-    ];
-    this.nfc.share(message).then(res => {
-      console.log(res);
-    }, err => this.doErr(err));
-  }
+  // test_as_sharer() {
+  //   var message = [
+  //     this.ndef.textRecord("hello, world")
+  //   ];
+  //   this.nfc.share(message).then(res => {
+  //     console.log(res);
+  //   }, err => this.doErr(err));
+  // }
 
   ionViewWillEnter() {
     this.refresh();
@@ -38,6 +38,8 @@ export class Tab1Page {
   refresh() {
     this.start_nfc_listener();
     this.start_nfc_reader_mode();
+
+    this.cd.detectChanges();
   }
   async handle_refresh(event: any) {
     const finish = await this.refresh();
