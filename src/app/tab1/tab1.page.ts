@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { NFC, Ndef } from '@awesome-cordova-plugins/nfc/ngx';
 import { ToastController } from '@ionic/angular';
 
@@ -8,15 +9,19 @@ import { ToastController } from '@ionic/angular';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page {
+export class Tab1Page implements OnInit {
 
   tag_id: string = '';
   tag_info: any;
   readerMode$: any;
   discoveredListenerSub$: any;
+  // qr_data: string = "0";
+  typed_price: boolean = false;
+
+  myForm: any;
 
   constructor(private nfc: NFC, private ndef: Ndef, private cd: ChangeDetectorRef,
-    private toastCtrl: ToastController) {}
+    private toastCtrl: ToastController, private fb: FormBuilder) {}
 
   // test_as_sharer() {
   //   var message = [
@@ -26,6 +31,26 @@ export class Tab1Page {
   //     console.log(res);
   //   }, err => this.doErr(err));
   // }
+
+  ngOnInit(): void {
+    this.myForm = this.fb.group({
+      qr_data: [0, Validators.required],
+    });
+  }
+
+  get qr_data() {
+    return this.myForm.get('qr_data')!.value.toString();
+  }
+
+  lock_price() {
+    this.typed_price = true;
+    this.myForm.get('qr_data').disable();
+  }
+
+  unlock_price() {
+    this.typed_price = false;
+    this.myForm.get('qr_data').enable();
+  }
 
   ionViewWillEnter() {
     this.refresh();

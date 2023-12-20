@@ -17,9 +17,16 @@
   <ion-card>
     <ion-card-content>
       <ion-buttons>
-        <ion-button (click)="share()">Share</ion-button>
-        <ion-button (click)="unshare()">Unshare</ion-button>
+        <!-- <ion-button (click)="share()">Share</ion-button>
+        <ion-button (click)="unshare()">Unshare</ion-button> -->
+        <ion-button (click)="start_scan()" class="ion-margin" expand="block">
+          Scan QR Code
+        </ion-button>
       </ion-buttons>
+
+      <ion-label class="ion-text-wrap" *ngIf="scanned_result">
+        {{ scanned_result }}
+      </ion-label>
     </ion-card-content>
   </ion-card>
 </ion-content>

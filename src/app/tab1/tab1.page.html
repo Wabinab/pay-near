@@ -16,12 +16,28 @@
   </ion-refresher>
 
   <ion-card>
-    <ion-card-header>
+    <!-- <ion-card-header>
       <ion-card-title>{{ tag_id || 'Tag' }}</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
       <pre>{{ tag_info == null || tag_info == '' ? 'nothing yet' : tag_info | json }}</pre>
+    </ion-card-content> -->
+
+    <div class="qrcodeImage" *ngIf="typed_price">
+      <qrcode [qrdata]="qr_data" [elementType]="'img'" [width]="300" [cssClass]="'center'"></qrcode>
+    </div>
+    <ion-card-header>
+      <ion-card-title *ngIf="typed_price">{{ qr_data }}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form [formGroup]="myForm" novalidate autocomplete="off">
+        <ion-input label="Price" formControlName="qr_data"></ion-input>
+
+        <ion-button (click)="lock_price()">Lock</ion-button>
+        <ion-button (click)="unlock_price()">Unlock</ion-button>
+      </form>
     </ion-card-content>
   </ion-card>
 </ion-content>

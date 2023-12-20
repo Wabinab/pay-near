@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NFC, Ndef } from '@awesome-cordova-plugins/nfc/ngx';
 import { ToastController } from '@ionic/angular';
+import { BarcodeScanner, SupportedFormat } from '@capacitor-community/barcode-scanner';
 
 @Component({
   selector: 'app-tab2',
@@ -10,6 +11,62 @@ import { ToastController } from '@ionic/angular';
 export class Tab2Page {
 
   constructor(private nfc: NFC, private ndef: Ndef, private toastCtrl: ToastController) {}
+
+  scanned_result: any;
+  content_visibility = "";
+  ionViewWillLeave() {
+    this.stop_scan();
+  }
+
+  // ===========================================================
+  async check_permission() {
+    try {
+      const status = await BarcodeScanner.checkPermission({ force: true })
+      this.present_toast(`${JSON.stringify(status)}`, "bottom", "", 30000);
+      if (status.granted) return true;
+      if (status.neverAsked) {
+        const c = confirm('We need your permission to use your camera to be able to scan barcodes');
+        if (c) return true;
+      }
+      return false;
+    } catch (e) {
+      this.doErr(e);
+    }
+    return false;
+  }
+
+  async start_scan() {
+    try {
+      const permission = await this.check_permission();
+      this.present_toast(`Permission: ${permission}`, "top");
+      if (!permission) return;
+
+      await BarcodeScanner.hideBackground();
+      document.querySelector('body')?.classList.add('scanner-active');
+      this.content_visibility = 'hidden';
+
+      const result = await BarcodeScanner.startScan({ targetedFormats: [SupportedFormat.QR_CODE] });
+      
+      await BarcodeScanner.showBackground();
+      document.querySelector('body')?.classList.remove('scanner-active');
+      this.content_visibility = '';
+
+      if (result?.hasContent) {
+        this.scanned_result = result.content;
+      }
+    } catch (err) {
+      this.doErr(err);
+      this.stop_scan();
+    }
+  }
+
+  stop_scan() {
+    BarcodeScanner.showBackground();
+    BarcodeScanner.stopScan();
+    document.querySelector('body')?.classList.remove('scanner-active');
+    this.content_visibility = '';
+  }
+  // ===========================================================
 
   share() {
     var message = [

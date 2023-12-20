@@ -24,3 +24,40 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+@import 'node_modules/bootstrap/scss/bootstrap';
+
+ion-modal#cancellation-modal {
+    --height: 20%;
+    --width: 75%;
+    --border-radius: 16px;
+    --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  
+  ion-modal#cancellation-modal::part(backdrop) {
+    background: rgba(209, 213, 219);
+    opacity: 1;
+  }
+  
+  ion-modal#cancellation-modal ion-toolbar#header {
+    --background: rgb(42, 197, 55);
+    --color: white;
+  }
+  
+  ion-toast.custom-bg-success {
+    --background: rgba(25, 135, 84, 0.85) !important;
+  }
+  
+  ion-toast.custom-bg-warning {
+    --background: rgba(255, 193, 7, 0.9) !important;
+    --color: rgb(5, 68, 255) !important;
+  }
+  
+  ion-toast.custom-bg-danger {
+    --background: rgba(200, 53, 69, 0.85) !important;
+  }
+  
+  ion-toast.custom-bg-info {
+    --background: rgba(150, 223, 237, 0.963) !important;
+    --color: black;
+  }
