@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" [style.visibility]="content_visibility">
   <ion-toolbar>
     <ion-title>
       NFC Emulator
@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" [style.visibility]="content_visibility">
   <ion-refresher slot="fixed" (ionRefresh)="handle_refresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
