@@ -44,3 +44,25 @@ ion-toast.custom-bg-info {
   --background: rgba(150, 223, 237, 0.963) !important;
   --color: black;
 }
+
+// =======================================================
+// Hide all elements
+body.barcode-scanning-active {
+  visibility: hidden;
+  --background: transparent;
+  --ion-background-color: transparent;
+}
+
+// Show only the barcode scanner modal
+.barcode-scanning-modal {
+  visibility: visible;
+}
+
+@media (prefers-color-scheme: dark) {
+  .barcode-scanning-modal {
+    --background: transparent;
+    --ion-background-color: transparent;
+  }
+}
+// =======================================================
+
