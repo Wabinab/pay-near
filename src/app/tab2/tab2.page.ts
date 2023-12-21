@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BarcodeFormat } from '@zxing/library';
 
 @Component({
   selector: 'app-tab2',
@@ -7,6 +8,27 @@ import { Component } from '@angular/core';
 })
 export class Tab2Page {
 
+  data: any;
   constructor() {}
 
+  allowedFormats = [BarcodeFormat.QR_CODE]
+  scannerEnabled = false;
+
+  enable_scanner() {
+    this.scannerEnabled = true;
+  }
+
+  disable_scanner() {
+    this.scannerEnabled = false;
+  }
+
+  scanSuccess(event: any) {
+    this.disable_scanner();
+    this.data = event;
+    // console.log(event);
+  }
+
+  scanError(event: any) {
+    console.error(event);
+  }
 }

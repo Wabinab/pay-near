@@ -7,11 +7,17 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <zxing-scanner 
+    [formats]="allowedFormats"
+    [enable]="scannerEnabled"
+    (scanSuccess)="scanSuccess($event)"
+    (scanError)="scanError($event)"
+  ></zxing-scanner>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <ion-buttons>
+    <ion-button (click)="enable_scanner()">Enable</ion-button>
+    <ion-button (click)="disable_scanner()">Disable</ion-button>
+  </ion-buttons>
+
+  {{ data }}
 </ion-content>
