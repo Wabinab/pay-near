@@ -32,6 +32,7 @@
     "@ionic/pwa-elements": "^3.2.2",
     "@near-wallet-selector/core": "^8.9.1",
     "@near-wallet-selector/ledger": "^8.9.1",
+    "@near-wallet-selector/modal-ui": "^8.9.1",
     "@near-wallet-selector/my-near-wallet": "^8.9.1",
     "@zxing/browser": "^0.1.4",
     "@zxing/library": "^0.20.0",

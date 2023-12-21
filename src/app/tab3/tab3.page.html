@@ -3,6 +3,9 @@
     <ion-title>
       Tab 3
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="show_wallet()">Login</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -14,4 +17,15 @@
   </ion-header>
 
   <app-explore-container name="Tab 3 page"></app-explore-container>
+
+  <ion-button (click)="setup()">Setup</ion-button>
 </ion-content>
+<!-- <near-wallet-selector-loading *ngIf="!modal || !selector"></near-wallet-selector-loading>
+<near-wallet-selector-content
+  *ngIf="!!selector"
+  [selector]="selector"
+  [accounts]="accounts"
+  [accountId]="accountId"
+  [modal]="modal"
+>
+</near-wallet-selector-content> -->
