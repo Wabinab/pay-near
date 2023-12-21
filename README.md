@@ -2,6 +2,7 @@
 Start with this: 
 ```bash
 npm i --legacy-peer-deps
+npx cap sync
 ```
 
 ## Compilation to Mobile (Android)
