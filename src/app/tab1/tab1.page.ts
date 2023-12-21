@@ -1,61 +1,40 @@
-import { Component } from '@angular/core';
-import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page {
+export class Tab1Page implements OnInit {
+  
+  myForm: any;
+  qr_finalized: boolean = false;
 
-  barcode: any;
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
 
-  async request_permission() {
-    const { camera } = await BarcodeScanner.requestPermissions();
-    console.log(`Request Permission: ${camera}`);
+  ngOnInit(): void {
+    this.myForm = this.fb.group({
+      qr_data: [0, Validators.required]
+    });
   }
 
-  async scan_single() {
-    document.querySelector('body')?.classList.add('barcode-scanner-active');
-
-    const listener = await BarcodeScanner.addListener(
-      'barcodeScanned',
-      async result => {
-        await listener.remove();
-        document.querySelector('body')?.classList.remove('barcode-scanner-active');
-        await BarcodeScanner.stopScan();
-        this.barcode = result.barcode;
-      }
-    );
-
-    await BarcodeScanner.startScan();
+  handle_refresh(event: any) {
+    
   }
 
-  async install_gbs() {
-    await BarcodeScanner.installGoogleBarcodeScannerModule();
+  get qr_data() {
+    return this.myForm.get('qr_data')!.value.toString();
   }
 
-  async check_permission() {
-    const { camera } = await BarcodeScanner.checkPermissions();
-    console.log(camera);
+  lock_price() {
+    this.qr_finalized = true;
+    this.myForm.get('qr_data').disable();
   }
 
-  async start_scan() {
-    await this.request_permission();
-    document.querySelector('body')?.classList.add('barcode-scanning-active');
-
-    const listener = await BarcodeScanner.addListener(
-      "barcodeScanned",
-      async (result) => { this.barcode = result.barcode; }
-    );
-
-    await BarcodeScanner.startScan();
-  }
-
-  async stop_scan() {
-    document.querySelector("body")?.classList.remove('barcode-scanner-active');
-    await BarcodeScanner.removeAllListeners();
-    await BarcodeScanner.stopScan();
+  unlock_price() {
+    this.qr_finalized = false;
+    this.myForm.get('qr_data').enable();
   }
 }

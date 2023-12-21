@@ -14,6 +14,10 @@ export class Tab2Page {
   allowedFormats = [BarcodeFormat.QR_CODE]
   scannerEnabled = false;
 
+  handle_refresh(event: any) {
+    
+  }
+
   enable_scanner() {
     this.scannerEnabled = true;
   }
