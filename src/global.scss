@@ -24,3 +24,23 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+@import 'node_modules/bootstrap/scss/bootstrap';
+
+ion-toast.custom-bg-success {
+  --background: rgba(25, 135, 84, 0.85) !important;
+}
+
+ion-toast.custom-bg-warning {
+  --background: rgba(255, 193, 7, 0.9) !important;
+  --color: rgb(5, 68, 255) !important;
+}
+
+ion-toast.custom-bg-danger {
+  --background: rgba(200, 53, 69, 0.85) !important;
+}
+
+ion-toast.custom-bg-info {
+  --background: rgba(150, 223, 237, 0.963) !important;
+  --color: black;
+}

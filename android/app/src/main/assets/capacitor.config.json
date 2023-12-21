@@ -1,0 +1,8 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "pay-near",
+	"webDir": "www",
+	"server": {
+		"androidScheme": "https"
+	}
+}
