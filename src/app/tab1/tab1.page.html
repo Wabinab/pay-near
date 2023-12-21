@@ -8,7 +8,10 @@
 
 <ion-content [fullscreen]="true">
   <ion-buttons>
-    <ion-button (click)="start_scan()">Start Scan</ion-button>
+    <ion-button (click)="scan_single()">Start Scan</ion-button>
+    <ion-button (click)="request_permission()">Get Permission</ion-button>
+    <ion-button (click)="install_gbs()">Install Google Barcode Scanner</ion-button>
+    <ion-button (click)="check_permission()">Check Permission</ion-button>
   </ion-buttons>
 
   {{ barcode | json }}

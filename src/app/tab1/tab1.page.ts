@@ -12,7 +12,33 @@ export class Tab1Page {
   constructor() {}
 
   async request_permission() {
-    await BarcodeScanner.requestPermissions();
+    const { camera } = await BarcodeScanner.requestPermissions();
+    console.log(`Request Permission: ${camera}`);
+  }
+
+  async scan_single() {
+    document.querySelector('body')?.classList.add('barcode-scanner-active');
+
+    const listener = await BarcodeScanner.addListener(
+      'barcodeScanned',
+      async result => {
+        await listener.remove();
+        document.querySelector('body')?.classList.remove('barcode-scanner-active');
+        await BarcodeScanner.stopScan();
+        this.barcode = result.barcode;
+      }
+    );
+
+    await BarcodeScanner.startScan();
+  }
+
+  async install_gbs() {
+    await BarcodeScanner.installGoogleBarcodeScannerModule();
+  }
+
+  async check_permission() {
+    const { camera } = await BarcodeScanner.checkPermissions();
+    console.log(camera);
   }
 
   async start_scan() {
