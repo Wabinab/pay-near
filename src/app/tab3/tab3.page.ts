@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
-import { setupLedger } from "@near-wallet-selector/ledger";
+// import { setupLedger } from "@near-wallet-selector/ledger";
 import { setupModal } from '@near-wallet-selector/modal-ui';
 
 @Component({
@@ -17,36 +17,32 @@ export class Tab3Page implements OnInit {
 
   // const selector = 
 
-  async ngOnInit() {
-    await this.setup().catch(err => {
-      console.error(err);
-    });
+  ngOnInit() {
+    // await this.selector();
+  }
+
+  ionViewWillEnter() {
+    setTimeout(() => this.setup(), 500);
   }
 
   async setup() {
-    await setupWalletSelector({
+    this.selector = await setupWalletSelector({
       network: "testnet",
       modules: [
-        // setupMyNearWallet(),
-        // setupLedger()
+        setupMyNearWallet(),
       ]
+    });
+
+    this.modalWallet = setupModal(this.selector, {
+      contractId: 'guest-book.testnet'
     });
   }
 
   show_wallet() {
-    // setupWalletSelector({
-    //   network: "testnet",
-    //   modules: [
-    //     setupMyNearWallet(),
-    //     setupLedger()
-    //   ],
-    // }).then(selector => {
-    //   this.modalWallet = setupModal(selector, {
-    //     contractId: 'guest-book.testnet'
-    //   });
-    //   this.modalWallet.show();
-    // })
-    // this.modalWallet.show();
+    if (this.modalWallet == undefined) this.setup();
+    // console.log(this.modalWallet);
+    // console.warn(this.selector);
+    this.modalWallet.show();
   }
 
 }

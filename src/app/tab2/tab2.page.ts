@@ -15,7 +15,7 @@ export class Tab2Page {
   scannerEnabled = false;
 
   handle_refresh(event: any) {
-    
+
   }
 
   enable_scanner() {
