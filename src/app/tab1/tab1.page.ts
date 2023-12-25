@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { LoginWalletService } from '../services/login-wallet.service';
 
 
 @Component({
@@ -12,7 +13,7 @@ export class Tab1Page implements OnInit {
   myForm: any;
   qr_finalized: boolean = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private walletSvc: LoginWalletService) {}
 
   ngOnInit(): void {
     this.myForm = this.fb.group({
@@ -22,6 +23,10 @@ export class Tab1Page implements OnInit {
 
   handle_refresh(event: any) {
     
+  }
+
+  get account_id() {
+    return this.walletSvc.account_id ?? "";
   }
 
   get qr_data() {
