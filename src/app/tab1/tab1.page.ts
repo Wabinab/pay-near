@@ -66,8 +66,8 @@ export class Tab1Page implements OnInit {
   }
 
   unlock_price() {
-    // Vibrate 0.5s, Pause 0.5s, Vibrate 1s. 
-    this.vibration.vibrate([500, 500, 1000]);
+    // Vibrate 0.3s, Pause 0.5s, Vibrate 0.8s. 
+    this.vibration.vibrate([300, 500, 800]);
     this.qr_finalized = false;
     this.myForm.get('qr_data').enable();
   }
