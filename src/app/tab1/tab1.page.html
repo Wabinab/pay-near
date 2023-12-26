@@ -16,16 +16,17 @@
     </div>
 
     <ion-card-header>
-      <ion-card-title *ngIf="qr_finalized">{{ qr_data }}</ion-card-title>
+      <ion-card-title class="text-center display-4" *ngIf="qr_finalized">{{ qr_data }}</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
       <form [formGroup]="myForm" novalidate autocomplete="off">
-        <ion-input label="Price" formControlName="qr_data"></ion-input>
-
         <div class="d-flex justify-content-center">
-          <ion-button (click)="lock_price()" size="large">Lock</ion-button>
-          <ion-button (click)="unlock_price()" size="large">Unlock</ion-button>
+          <ion-input fill="outline" label="Price" formControlName="qr_data" 
+            class="custom" errorText="{{ qr_error }}"></ion-input>
+          <ion-button slot="end" (click)="lock_or_unlock()" size="large">
+            {{ lock_unlock_name }}
+          </ion-button>
         </div>
       </form>
     </ion-card-content>

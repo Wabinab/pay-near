@@ -62,7 +62,7 @@ export class LoginWalletService {
   double_click: boolean = false;
   async logout() {
     if (!this.double_click) {
-      this.toastSvc.present_toast("Click again to logout", 'middle');
+      this.toastSvc.present_toast("Click logout again", 'middle');
       this.double_click = true;
       setTimeout(() => { this.double_click = false; }, 3000);
       return;

@@ -7,6 +7,7 @@ import { ExploreContainerComponentModule } from '../explore-container/explore-co
 
 import { Tab1PageRoutingModule } from './tab1-routing.module';
 import { QRCodeModule } from 'angularx-qrcode';
+import { Vibration } from '@ionic-native/vibration/ngx';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import { QRCodeModule } from 'angularx-qrcode';
     Tab1PageRoutingModule,
     QRCodeModule
   ],
-  declarations: [Tab1Page]
+  declarations: [Tab1Page],
+  providers: [Vibration]
 })
 export class Tab1PageModule {}
