@@ -1,0 +1,28 @@
+[package]
+name = "pay_near"
+version = "1.0.0"
+authors = ["wabinab"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+near-sdk = "4.1.1"
+near-units = "0.2.0"
+string_calc = "0.2.2"
+uint = { version = "0.9.5", default-features = false }
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
+
+[workspace]
+members = ["sandbox-rs"]
+
+[patch.crates-io]
+parity-secp256k1 = {git = "https://github.com/paritytech/rust-secp256k1"}
