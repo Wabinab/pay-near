@@ -32,3 +32,10 @@ If your `process` need `NODE_ENV`, for example, just add it also like `NODE_ENV=
 
 ### Wallet Selector not showing up
 You'd probably forget to import the css. [As described](https://github.com/near/wallet-selector/tree/main/packages/modal-ui), you need to import the main css file into `styles.scss` or `global.scss` (for Ionic), then it'll display. 
+
+### Dependency of installing package yanked
+Example, this crate `parity-secp256k1` was yanked in deprecation, but `near-sdk-rs` has dependencies that dependent on it. Therefore, we can do the below to patch it up, directly from github. **It's strongly recommend cloning/forking the repo to your repo, so that the original owner cannot delete it and cause this trick to not work forever.**
+```toml
+[patch.crates-io]
+parity-secp256k1 = {git = "https://github.com/paritytech/rust-secp256k1"}
+```
