@@ -11,7 +11,9 @@ pub struct Receipt {
   pub to: AccountId,
   pub total: Decimal,
   pub charges: Decimal,
-  pub effective_total: Decimal,  // total - charges. Exclude gas fee. 
+  pub final_total: Decimal,  // total - charges. Exclude gas fee. 
+  pub paid: Decimal,
+  pub refund: Option<Decimal>
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]

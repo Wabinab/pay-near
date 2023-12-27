@@ -1,22 +1,32 @@
 // Find all our documentation at https://docs.near.org
 use string_calc::*;
+use near_units::near::to_human;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::env::log_str;
+// use near_sdk::env::log_str;
+use near_sdk::store::{self, LookupMap, Vector};
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::{near_bindgen, AccountId};
+use near_sdk::{near_bindgen, env, AccountId, BorshStorageKey, PanicOnDefault, Balance, Promise};
 
 pub use crate::transfer::*;
 use crate::metadata::*;
+use crate::internal::*;
 
 mod transfer;
 mod metadata;
+mod internal;
 
 // Define the contract structure
 #[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
     // greeting: String,
+    // We'll add the required ones later. 
 }
+
+// #[derive(BorshSerialize, BorshStorageKey)]
+// enum SKey {
+
+// }
 
 // Define the default, which automatically initializes the contract
 // impl Default for Contract {
@@ -28,16 +38,14 @@ pub struct Contract {
 // Implement the contract structure
 #[near_bindgen]
 impl Contract {
-    // // Public method - returns the greeting saved, defaulting to DEFAULT_GREETING
-    // pub fn get_greeting(&self) -> String {
-    //     return self.greeting.clone();
-    // }
+    #[init]
+    pub fn new() -> Self {
+      let mut this = Self {
 
-    // // Public method - accepts a greeting, such as "howdy", and records it
-    // pub fn set_greeting(&mut self, greeting: String) {
-    //     log_str(&format!("Saving greeting: {greeting}"));
-    //     self.greeting = greeting;
-    // }
+      };
+
+      this
+    }
 }
 
 /*
