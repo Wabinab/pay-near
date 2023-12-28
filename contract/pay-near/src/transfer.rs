@@ -15,6 +15,7 @@ pub trait Transfer {
 
 #[near_bindgen]
 impl Transfer for Contract {
+  #[payable]
   fn transfer(&mut self, target: AccountId, amount: u128, date: String) -> Receipt {
     let contract_caller = env::predecessor_account_id();
     if contract_caller == target { env::panic_str("You cannot pay to yourself."); }

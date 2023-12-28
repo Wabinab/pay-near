@@ -23,7 +23,7 @@
       <form [formGroup]="myForm" novalidate autocomplete="off">
         <div class="d-flex justify-content-center">
           <ion-input fill="outline" label="Price" formControlName="qr_data" 
-            class="custom" errorText="{{ qr_error }}"></ion-input>
+            class="custom" errorText="{{ qr_error }}" type="number"></ion-input>
           <ion-button slot="end" (click)="lock_or_unlock()" size="large">
             {{ lock_unlock_name }}
           </ion-button>

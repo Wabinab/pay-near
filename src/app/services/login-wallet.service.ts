@@ -7,7 +7,7 @@ import { setupHereWallet } from '@near-wallet-selector/here-wallet';
 import { setupNearFi } from "@near-wallet-selector/nearfi";
 import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet"; 
 import { ToastService } from './toast.service';
-import { Contract } from 'near-api-js';
+import { Contract, providers } from 'near-api-js';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,12 @@ export class LoginWalletService {
   }
 
   setup_contract() {
-    this.contract = new Contract(this.wallet.account(), this.contract_id, {
+    // console.warn(this.state.accounts.find((acc: any) => acc.active));
+    if (!this.state.accounts.find((acc: any) => acc.active)) {
+      this.toastSvc.present_toast("No active account, cannot setup.", "top", "bg-danger", 5000);
+      return;
+    }
+    this.contract = new Contract(this.state.accounts.find((acc: any) => acc.active), this.contract_id, {
       viewMethods: [],
       changeMethods: ["transfer"]
     });
@@ -102,5 +107,25 @@ export class LoginWalletService {
 
     this.toastSvc.present_toast("Logged out", 'middle', 'bg-success');
     this.double_click = false;
+  }
+
+  // =================================
+  async call(method: string, args = {}, deposit = "0") {
+    const gas = '30000000000000';
+    const outcome = await this.wallet.signAndSendTransaction({
+      signerId: this.account_id,
+      receiverId: this.contract_id,
+      actions: [{
+        type: 'FunctionCall',
+        params: {
+          methodName: method,
+          args,
+          gas,
+          deposit
+        },
+      }]
+    });
+
+    return providers.getTransactionLastResult(outcome);
   }
 }
