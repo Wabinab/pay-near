@@ -7,6 +7,7 @@ import { setupHereWallet } from '@near-wallet-selector/here-wallet';
 import { setupNearFi } from "@near-wallet-selector/nearfi";
 import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet"; 
 import { ToastService } from './toast.service';
+import { Contract } from 'near-api-js';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +18,19 @@ export class LoginWalletService {
   modalWallet: any;
   state: any;
   account_id: string | null = null;
+  wallet: any;
+  contract_id: string = 'dev-1703663376740-50703134012948';
+  contract: Contract | null = null;
 
   constructor(private toastSvc: ToastService) {
     setTimeout(() => this.setup(), 500);
+  }
+
+  setup_contract() {
+    this.contract = new Contract(this.wallet.account(), this.contract_id, {
+      viewMethods: [],
+      changeMethods: ["transfer"]
+    });
   }
 
   async setup() {
@@ -35,11 +46,17 @@ export class LoginWalletService {
     });
 
     this.modalWallet = setupModal(this.selector, {
-      contractId: 'guest-book.testnet'
+      contractId: this.contract_id
     });
 
-    this.state = this.selector.store.getState();
-    this.account_id = this.get_account_id();
+    if (this.selector.isSignedIn()) {
+      this.state = this.selector.store.getState();
+      this.get_account_id();
+      // this.account_id = this.get_account_id();
+  
+      this.wallet = await this.selector.wallet();
+      this.setup_contract();
+    }
   }
 
   show_wallet() {
@@ -56,7 +73,8 @@ export class LoginWalletService {
 
   get_account_id() {
     if (this.modalWallet == undefined) this.setup();
-    return this.state.accounts.find((acc: any) => acc.active)?.accountId || null;
+    this.account_id = this.state.accounts.find((acc: any) => acc.active)?.accountId || null;
+    return this.account_id;
   }
 
   double_click: boolean = false;
@@ -79,8 +97,13 @@ export class LoginWalletService {
     // Clear all (except selector and modalWallet)
     this.state = null;
     this.account_id = null;
+    this.wallet = null;
+    this.contract = null;
 
     this.toastSvc.present_toast("Logged out", 'middle', 'bg-success');
     this.double_click = false;
   }
+
+  // =======================================
+  
 }
