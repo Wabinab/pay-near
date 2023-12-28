@@ -20,7 +20,7 @@ export class LoginWalletService {
   account_id: string | null = null;
   wallet: any;
   contract_id: string = 'dev-1703663376740-50703134012948';
-  contract: Contract | null = null;
+  contract: any | null = null;
 
   constructor(private toastSvc: ToastService) {
     setTimeout(() => this.setup(), 500);
@@ -103,7 +103,4 @@ export class LoginWalletService {
     this.toastSvc.present_toast("Logged out", 'middle', 'bg-success');
     this.double_click = false;
   }
-
-  // =======================================
-  
 }
