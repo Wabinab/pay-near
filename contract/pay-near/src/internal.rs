@@ -2,7 +2,7 @@ use crate::*;
 use near_token::NearToken;
 
 const MAX_FEE: NearToken = NearToken::from_millinear(100);  // 0.1 N
-const MIN_FEE: NearToken = NearToken::from_yoctonear(10u128.pow(19));  // 0.00001 N.
+const MIN_FEE: NearToken = NearToken::from_yoctonear(10u128.pow(18));  // 0.00001 N.
 const MIN_TRANSFER: NearToken = NearToken::from_millinear(1);  // 0.001 N
 
 pub(crate) fn refund(amount: u128) {
@@ -36,10 +36,19 @@ pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> R
   return Receipt {
     from: env::predecessor_account_id(),
     to: target,
-    total: to_human(total),
-    charges: to_human(fee.as_yoctonear()),
-    final_total: to_human(remnant.as_yoctonear()),
+    total: to_human(total),  
+    charges:  to_human(fee.as_yoctonear()),  
+    final_total: to_human(remnant.as_yoctonear()), 
     paid: "".to_owned(),
-    refund: Some(to_human(refund))
+    refund: Some(refund.to_string()) // Some(to_human(refund))
   }
+  // return Receipt { 
+  //   from: "null.near".to_owned().parse().unwrap(),
+  //   to: "null.near".to_owned().parse().unwrap(),
+  //   total: "0".to_owned(),
+  //   charges: "0".to_owned(),
+  //   final_total: "0".to_owned(),
+  //   paid: "0".to_owned(),
+  //   refund: None
+  // };
 }
