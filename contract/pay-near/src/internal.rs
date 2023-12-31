@@ -23,15 +23,17 @@ pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> R
   let remnant: NearToken = tot.checked_sub(fee)
     .unwrap_or_else(|| env::panic_str("calculate_fee remnant failed."));
 
-  let p1 = Promise::new(env::current_account_id())
-    .transfer(fee.as_yoctonear());
-  let p2 = Promise::new(target.clone()).transfer(remnant.as_yoctonear());
+  // let p1 = Promise::new(env::current_account_id())
+  //   .transfer(fee.as_yoctonear());
+  let p1 = Promise::new(target.clone()).transfer(remnant.as_yoctonear());
   // p1.then(p2);
 
+  let _refund = None;
   if refund > 1 { 
-    let p3 = Promise::new(env::predecessor_account_id()).transfer(refund);
-    p1.then(p2).then(p3); 
-  } else { p1.then(p2); }
+    let p2 = Promise::new(env::predecessor_account_id()).transfer(refund);
+    _refund = Some(to_human(refund));
+    p1.then(p2);
+  } else { p1; }
 
   return Receipt {
     from: env::predecessor_account_id(),
@@ -40,7 +42,8 @@ pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> R
     charges:  to_human(fee.as_yoctonear()),  
     final_total: to_human(remnant.as_yoctonear()), 
     paid: "".to_owned(),
-    refund: Some(refund.to_string()) // Some(to_human(refund))
+    // refund: Some(refund.to_string()) // Some(to_human(refund))
+    refund: _refund
   }
   // return Receipt { 
   //   from: "null.near".to_owned().parse().unwrap(),
