@@ -20,6 +20,6 @@ pub struct Receipt {
 #[serde(crate = "near_sdk::serde")]
 pub struct Statistics {
   pub account_id: AccountId,
-  pub month_and_year: Vec<String>,  // only last 12 months? 
+  pub bins: Vec<String>,  
   pub values: Vec<Decimal>,  // same length as month_and_year Vec. 
 }

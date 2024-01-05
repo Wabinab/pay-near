@@ -29,11 +29,16 @@ async fn main() -> anyhow::Result<()> {
         .transact()
         .await?
         .into_result()?;
+    // println!("{:#?}", contract);
+    // println!("{:#?}\n{:#?}\n=====================", alice.clone(), bob.clone());
 
     // println!("{:?}", &contract.id());
-    let _ = alice.call(contract.id(), "new")
-      .args_json(json!({}))
-      .transact().await?;
+    // let result = alice.call(contract.id(), "new")
+    //   .args_json(json!({}))
+    //   .transact().await?;
+    let result = contract.call("new").transact().await?;
+    println!("{:#?}", result);
+    assert!(result.is_success(), "FAIL: Alice failed to call new.");
 
     // begin tests
     // test_default_message(&alice, &contract).await?;
@@ -49,19 +54,19 @@ async fn test_transfer(
 ) -> anyhow::Result<()> {
   let user_bal_before = user.view_account().await?.balance;
   let trgt_bal_before = target.view_account().await?.balance;
-  println!("Before: {:?}, {:?}", user_bal_before, trgt_bal_before);
+  // println!("Before: {:?}, {:?}", user_bal_before, trgt_bal_before);
 
   let result = user
     .call(contract.id(), "transfer")
     .deposit(parse_near!("10 N"))
     .args_json(json!({
       "target": &target.id(),
-      "amount": parse_near!("10 N"),
+      "amount": parse_near!("10 N").to_string(),
       "date": "2023-12-30T03:04:49.048Z"
     }))
     .transact().await?;
-  // println!("{:#?}", result);
-  assert!(result.is_ok());
+  println!("{:#?}", result);
+  assert!(result.is_success());
 
   let user_bal_after = user.view_account().await?.balance;
   let trgt_bal_after = target.view_account().await?.balance;

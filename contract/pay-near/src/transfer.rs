@@ -6,7 +6,7 @@ pub trait Transfer {
 
   // Get statistics of receiving. 
   fn activate_statistics(&mut self);  // deposit to cover storage cost.
-  fn stats_activated(&self);  // check if this guys activated statistics.
+  fn stats_activated(&self, account: AccountId) -> bool;  // check if this guys activated statistics.
   fn get_statistics(&self, s_or_r: String) -> Statistics;
 
   // Check latest: whether transaction finished. 
@@ -30,30 +30,39 @@ impl Transfer for Contract {
     // Date is for statistics. 
 
     return receipt;
-    // return Receipt { 
-    //   from: "null.near".to_owned().parse().unwrap(),
-    //   to: "null.near".to_owned().parse().unwrap(),
-    //   total: "0".to_owned(),
-    //   charges: "0".to_owned(),
-    //   final_total: "0".to_owned(),
-    //   paid: "0".to_owned(),
-    //   refund: None
-    // };
   }
 
-
+  #[payable]
   fn activate_statistics(&mut self) {
+    let caller = env::predecessor_account_id();
 
+    // Check if already activated statistics. 
+    if self.stats_acc.contains(&caller) { env::panic_str("Account already activated."); }
+    let deposit = NearToken::from_yoctonear(env::attached_deposit());
+
+    if deposit < NearToken::from_millinear(750) {
+      env::panic_str("Requires 0.75N - 1N for storage.");
+    }
+    // Refund if more than 1N attached. 
+    if deposit > NearToken::from_near(1) {
+      // let deposit = NearToken::from_yoctonear(env::attached_deposit());
+      let refund_amt = deposit.checked_sub(NearToken::from_near(1)).unwrap_or_else(|| 
+        env::panic_str("activate_statistics: Deposit refund_amt cannot subtract.")
+      );
+      refund(refund_amt.as_yoctonear());
+    }
+
+    self.stats_acc.insert(caller);
   }
 
-  fn stats_activated(&self) {
-
+  fn stats_activated(&self, account: AccountId) -> bool {
+    return self.stats_acc.contains(&value);
   }
 
   fn get_statistics(&self, s_or_r: String) -> Statistics {
     return Statistics {
       account_id: "null.near".to_owned().parse().unwrap(),
-      month_and_year: Vec::new(),
+      bins: Vec::new(),
       values: Vec::new()
     };
   }
