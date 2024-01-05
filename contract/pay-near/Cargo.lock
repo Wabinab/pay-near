@@ -2084,6 +2084,7 @@ dependencies = [
 name = "pay_near"
 version = "1.0.0"
 dependencies = [
+ "chrono",
  "near-sdk",
  "near-token",
  "near-units",
@@ -2851,9 +2852,9 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "string_calc"
-version = "0.2.2"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3baba3aaaaf0b59df3b7649568d7a6e206e71d2ca9feb05020602394a2ce0b9"
+checksum = "e3c360f4a726fe33a6f61d2d0113bea76d3b824cb4d12f21a6d4802fbd204abb"
 
 [[package]]
 name = "strum"

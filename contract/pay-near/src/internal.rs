@@ -56,7 +56,7 @@ pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> R
 // which means we need to increase deposit. 
 pub(crate) fn organize_stats(target: AccountId, stats: Statistics) {
   let date_ms = env::block_timestamp_ms();
-  let datetime = NaiveDateTime::from_timestamp_millis(date_ms)
+  let datetime = NaiveDateTime::from_timestamp_millis(date_ms as i64)
     .unwrap_or_else(|| env::panic_str("Cannot unwrap naive date time from timestamp millis")
   );
   let year = datetime.date().year();
@@ -92,10 +92,13 @@ pub(crate) fn organize_stats(target: AccountId, stats: Statistics) {
         );
       }
 
-      let bin0: f64 = stats.values.iter()
-        .map(|c| c.parse::<f64>().unwrap())
-        .collect();
-      let mut values = vec![bin0.to_string()];
+      // let bin0: f64 = stats.values.iter()
+      //   .map(|c| c.parse::<f64>().unwrap())
+      //   .collect();
+      // let mut values = vec![bin0.to_string()];
+      let mut values = sum(stats.values).unwrap_or_else(|error| {
+        env::panic_str(error);
+      });
     }
   }
 }

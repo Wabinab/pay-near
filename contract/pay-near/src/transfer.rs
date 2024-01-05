@@ -56,7 +56,7 @@ impl Transfer for Contract {
   }
 
   fn stats_activated(&self, account: AccountId) -> bool {
-    return self.stats_acc.contains(&value);
+    return self.stats_acc.contains(&account);
   }
 
   fn get_statistics(&self, s_or_r: String) -> Statistics {

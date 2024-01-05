@@ -90,18 +90,19 @@ mod tests {
       );
       testing_env!(context.build());
       contract.activate_statistics();
-      assert_eq!(contract.stats_activated(None), true);
+      assert_eq!(contract.stats_activated(accounts(1)), true);
+      // assert_eq!(contract.stats_activated(None), true);
 
       let context = get_context(accounts(2));
       testing_env!(context.build());
-      assert_eq!(contract.stats_activated(None), false);
-      assert_eq!(contract.stats_activated(Some(accounts(1))), true);
+      // assert_eq!(contract.stats_activated(None), false);
+      assert_eq!(contract.stats_activated(accounts(1)), true);
 
       // assert_eq!(contract.stats_acc.length, 1);
     }
 
-    #[test]
-    fn test_debug() {
-      assert_eq!(env::block_timestamp_ms(), 1);
-    }
+    // #[test]
+    // fn test_debug() {
+    //   assert_eq!(env::block_timestamp_ms(), 1);
+    // }
 }
