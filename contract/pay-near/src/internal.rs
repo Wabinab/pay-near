@@ -12,7 +12,7 @@ pub(crate) fn refund(amount: u128) {
   }
 }
 
-pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> Receipt {
+pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> (Receipt, u128) {
   let tot: NearToken = NearToken::from_yoctonear(total);
   if tot < MIN_TRANSFER { env::panic_str("Minimum transfer: 0.001N"); }
   let percent_denom: u128 = 1000;  // percentage denominator, because cannot be float.
@@ -35,7 +35,7 @@ pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> R
     p1.then(p2);
   } else { p1; }
 
-  return Receipt {
+  return (Receipt {
     from: env::predecessor_account_id(),
     to: target,
     total: to_human(total),  
@@ -43,7 +43,8 @@ pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> R
     final_total: to_human(remnant.as_yoctonear()), 
     paid: "".to_owned(),
     refund: _refund
-  }
+  }, 
+  remnant.as_yoctonear());
 }
 
 // This organize statistics into simplest format. 
@@ -61,51 +62,135 @@ pub(crate) fn organize_stats(target: AccountId, stats: Statistics) {
   );
   let year = datetime.date().year();
   let month = datetime.date().month();
-
-  // Make bins
-  let mut bins: Vec<String> = vec!["older".to_owned()];
-  for i in year.checked_sub(4).unwrap()..year {
-      bins.push(i.to_string());
-  }
-  bins.extend(["Jan", "Feb", "Mar", "Apr", "May",
-    "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ].map(|c| c.to_owned()));
-
-  // Get "older" bin.
-  let five_years_ago = year.checked_sub(5).unwrap();
-  let mut years: Vec<i32> = stats.bins[1..=4].iter()
-    .map(|c| c.parse::<i32>().unwrap())
-    .collect();
-  let four_years_bin: i32 = stats.bins[1].parse().unwrap();
-  years.insert(0, four_years_bin.checked_sub(1).unwrap());
-  let final_year_bin: i32 = stats.bins[4].parse().unwrap();
-  years.push(final_year_bin.checked_add(1).unwrap());
-  match years.iter().position(|&r| r == five_years_ago) {
-    Some(value) => {
-
-    },
-    None => {
-      if five_years_ago < years[0] { env::panic_str("five_years_ago is older than the oldest bin. Time move backwards?"); }
-      if !(five_years_ago > years[5]) {
-        env::panic_str(format!("{} > {} is invalid. Check for bug.",
-          five_years_ago, years[5]).as_str()
-        );
-      }
-
-      // let bin0: f64 = stats.values.iter()
-      //   .map(|c| c.parse::<f64>().unwrap())
-      //   .collect();
-      // let mut values = vec![bin0.to_string()];
-      let mut values = sum(stats.values).unwrap_or_else(|error| {
-        env::panic_str(error);
-      });
-    }
-  }
+  
 }
 
-pub(crate) fn add_stats(target: AccountId) {
+pub(crate) fn add_stats(target: AccountId, statistics: Option<Statistics>, remnant: u128
+  ) -> Statistics 
+{
   let date_ms = env::block_timestamp_ms();
+  let datetime = NaiveDateTime::from_timestamp_millis(date_ms as i64)
+    .unwrap_or_else(|| env::panic_str("Cannot unwrap naive date time from timestamp millis")
+  );
+  let year: i32 = datetime.date().year();
+  let month: u32 = datetime.date().month();
+
+  return match statistics {
+    Some(value) => {
+      // Already have old statistics.
+      let old_stats: Statistics = value;
+      let mut stats: Statistics = Statistics {
+        account_id: old_stats.account_id.clone(),
+        bins_months: Vec::new(), values_months: Vec::new(),
+        bins_years: Vec::new(), values_years: Vec::new()
+      };
+
+      // If match bins-months
+      if old_stats.bins_months.last().unwrap() == &month_bin(&month, &year) {
+        stats.bins_months = old_stats.bins_months;
+        
+        let mut values = old_stats.values_months;
+        let val_len = values.len() - 1;
+        values[val_len] = checked_add(values.last().unwrap(), yoctonear_to_near(remnant.clone()))
+          .unwrap_or_else(|_| env::panic_str("Cannot add values_months."));
+        stats.values_months = values;
+
+        // If bins-months match, years should match too. 
+        stats.bins_years = old_stats.bins_years;
+
+        let mut values = old_stats.values_years;
+        let val_len = values.len() - 1;
+        values[val_len] = checked_add(values.last().unwrap(), yoctonear_to_near(remnant.clone()))
+          .unwrap_or_else(|_| env::panic_str("Cannot add values_years."));
+        stats.values_years = values;
+
+        return stats;
+      }
+
+      // If not match bins-months, regenerate bins last 12 months
+      // make bins_months as key, values_months as value (dictionary)
+      // for each regenerated value, check for values in old ones. 
+      let bin_months = create_month_bins(&month, &year);
+      stats.bins_months = bin_months.clone();
+
+      let zipped_month = old_stats.bins_months.iter().zip(old_stats.values_months.iter());
+      let mapped_month = zipped_month.collect::<HashMap<_, _>>();
+      let mut new_values_month: Vec<Decimal> = Vec::new();
+      for name in bin_months.clone() {
+        let value: Decimal = match mapped_month.get(&name) {
+          Some(val) => val.to_string(),
+          None => "0".to_owned()
+        };
+        new_values_month.push(value);
+      }
+      let val_len = new_values_month.len() - 1;
+      new_values_month[val_len] = checked_add(new_values_month.last().unwrap(), 
+        yoctonear_to_near(remnant.clone())
+      ).unwrap_or_else(|_| env::panic_str("cannot add new_values_month."));
+      stats.values_months = new_values_month;
+
+      let bin_years = create_year_bins(&year);
+      stats.bins_years = bin_years.clone();
+
+      let zipped_year = old_stats.bins_years.iter().zip(old_stats.values_years.iter());
+      let mapped_year = zipped_year.collect::<HashMap<_, _>>();
+      let mut new_values_year: Vec<Decimal> = Vec::new();
+      for name in bin_years.clone() {
+        let value: Decimal = match mapped_year.get(&name) {
+          Some(val) => val.to_string(),
+          None => "0".to_owned()
+        };
+        new_values_year.push(value);
+      }
+      let val_len = new_values_year.len() - 1;
+      new_values_year[val_len] = checked_add(new_values_year.last().unwrap(), 
+        yoctonear_to_near(remnant.clone())
+      ).unwrap_or_else(|_| env::panic_str("cannot add new_values_year."));
+      stats.values_years = new_values_year;
+
+      return stats;
+    },
+    None => {
+      // No statistics yet. 
+      let stats: Statistics = Statistics {
+        account_id: target.clone(),
+        bins_months: vec![month_bin(&month, &year)],
+        values_months: vec![yoctonear_to_near(remnant.clone())],
+        bins_years: vec![year_bin(&year)],
+        values_years: vec![yoctonear_to_near(remnant.clone())]
+      };
+      return stats;
+    }
+  };
 }
 
 // ================================================
-// Taken from chrono
+// mutate datetime format
+fn month_bin(month: &u32, year: &i32) -> String {
+  return year.to_string() + " " + &month.to_string()
+}
+
+fn create_month_bins(month: &u32, year: &i32) -> Vec<String> {
+  let mut bins: Vec<String> = Vec::new();
+  let mut month: u32 = month.clone();
+  let mut year: i32 = year.clone();
+
+  for i in 0..12 {
+    if month == 0 { 
+      month = 12; 
+      year -= 1; 
+    }
+    bins.push(month_bin(&month, &year));
+    month -= 1;
+  }
+
+  return bins;
+}
+
+fn year_bin(year: &i32) -> String {
+  return year.to_string();
+}
+
+fn create_year_bins(year: &i32) -> Vec<String> {
+  return (0..10).map(|i| year_bin(&(year - i))).collect();
+}

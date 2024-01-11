@@ -24,7 +24,7 @@ impl Transfer for Contract {
     let refund = env::attached_deposit() - amount;  // If attached_deposit more, we'll refund the extra later. 
     
     // Transfer included refund. 
-    let mut receipt: Receipt = handle_transfer(amount, target, refund);
+    let (mut receipt, remnant) = handle_transfer(amount, target, refund);
     receipt.paid = to_human(env::attached_deposit());
 
     // Date is for statistics. 
@@ -62,8 +62,10 @@ impl Transfer for Contract {
   fn get_statistics(&self, s_or_r: String) -> Statistics {
     return Statistics {
       account_id: "null.near".to_owned().parse().unwrap(),
-      bins: Vec::new(),
-      values: Vec::new()
+      bins_months: Vec::new(),
+      values_months: Vec::new(),
+      bins_years: Vec::new(),
+      values_years: Vec::new()
     };
   }
 
