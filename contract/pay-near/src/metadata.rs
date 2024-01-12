@@ -4,7 +4,7 @@ pub(crate) type Decimal = String;
 
 
 // ===================================================
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Receipt {
   pub from: AccountId,
@@ -16,7 +16,7 @@ pub struct Receipt {
   pub refund: Option<Decimal>
 }
 
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Statistics {
   pub account_id: AccountId,

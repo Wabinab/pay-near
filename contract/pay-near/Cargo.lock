@@ -1555,9 +1555,9 @@ dependencies = [
 
 [[package]]
 name = "near-helper"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "28745d159899325b06c9ad74ffe2ab30a24fbe9f39b80022a5b4e34fd81a70bb"
+checksum = "e32ab87d99c33e76dc1f0d950ee4bc31881506c46cba1c8daad3565d4b23eb4d"
 
 [[package]]
 name = "near-jsonrpc-client"
@@ -3608,9 +3608,9 @@ dependencies = [
 
 [[package]]
 name = "workspaces"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f54d9286e6dc20dd6d7676de27ace7b0d4f755164fe14c1f07bcbdd08d54052"
+checksum = "73b13d249618f197811e3673decc81459730cf5cc09ee7246dc4bede1e9333bc"
 dependencies = [
  "async-process",
  "async-trait",

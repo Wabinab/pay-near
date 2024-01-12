@@ -55,17 +55,17 @@ pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> (
 // Jan to Sep has their own bin. That's it. 
 // Going down too much is probably gonna take too much space per person,
 // which means we need to increase deposit. 
-pub(crate) fn organize_stats(target: AccountId, stats: Statistics) {
-  let date_ms = env::block_timestamp_ms();
-  let datetime = NaiveDateTime::from_timestamp_millis(date_ms as i64)
-    .unwrap_or_else(|| env::panic_str("Cannot unwrap naive date time from timestamp millis")
-  );
-  let year = datetime.date().year();
-  let month = datetime.date().month();
+// pub(crate) fn organize_stats(target: AccountId, stats: Statistics) {
+//   let date_ms = env::block_timestamp_ms();
+//   let datetime = NaiveDateTime::from_timestamp_millis(date_ms as i64)
+//     .unwrap_or_else(|| env::panic_str("Cannot unwrap naive date time from timestamp millis")
+//   );
+//   let year = datetime.date().year();
+//   let month = datetime.date().month();
   
-}
+// }
 
-pub(crate) fn add_stats(target: AccountId, statistics: Option<Statistics>, remnant: u128
+pub(crate) fn add_stats(target: AccountId, statistics: Option<&Statistics>, remnant: u128
   ) -> Statistics 
 {
   let date_ms = env::block_timestamp_ms();
@@ -78,7 +78,7 @@ pub(crate) fn add_stats(target: AccountId, statistics: Option<Statistics>, remna
   return match statistics {
     Some(value) => {
       // Already have old statistics.
-      let old_stats: Statistics = value;
+      let old_stats: Statistics = value.clone();
       let mut stats: Statistics = Statistics {
         account_id: old_stats.account_id.clone(),
         bins_months: Vec::new(), values_months: Vec::new(),

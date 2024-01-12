@@ -7,7 +7,7 @@ pub trait Transfer {
   // Get statistics of receiving. 
   fn activate_statistics(&mut self);  // deposit to cover storage cost.
   fn stats_activated(&self, account: AccountId) -> bool;  // check if this guys activated statistics.
-  fn get_statistics(&self, s_or_r: String) -> Statistics;
+  fn get_statistics(&self, account: AccountId) -> Option<&Statistics>;
 
   // Check latest: whether transaction finished. 
   fn latest_transaction(&self) -> Receipt;
@@ -24,10 +24,16 @@ impl Transfer for Contract {
     let refund = env::attached_deposit() - amount;  // If attached_deposit more, we'll refund the extra later. 
     
     // Transfer included refund. 
-    let (mut receipt, remnant) = handle_transfer(amount, target, refund);
+    let (mut receipt, remnant) = handle_transfer(amount, target.clone(), refund);
     receipt.paid = to_human(env::attached_deposit());
 
     // Date is for statistics. 
+    // Probably we'll do statistics for payers but in the future. 
+    if self.earn_stats.contains_key(&target) {
+      let old_stats = self.earn_stats.get(&target);
+      let stats = add_stats(target.clone(), old_stats, remnant);
+      self.earn_stats.insert(target.clone(), stats);
+    }
 
     return receipt;
   }
@@ -37,7 +43,7 @@ impl Transfer for Contract {
     let caller = env::predecessor_account_id();
 
     // Check if already activated statistics. 
-    if self.stats_acc.contains(&caller) { env::panic_str("Account already activated."); }
+    if self.earn_stats.contains_key(&caller) { env::panic_str("Account already activated."); }
     let deposit = NearToken::from_yoctonear(env::attached_deposit());
 
     if deposit < NearToken::from_millinear(750) {
@@ -52,21 +58,23 @@ impl Transfer for Contract {
       refund(refund_amt.as_yoctonear());
     }
 
-    self.stats_acc.insert(caller);
+    let stats = add_stats(caller.clone(), None, 0);
+    self.earn_stats.insert(caller, stats);
   }
 
   fn stats_activated(&self, account: AccountId) -> bool {
-    return self.stats_acc.contains(&account);
+    return self.earn_stats.contains_key(&account);
   }
 
-  fn get_statistics(&self, s_or_r: String) -> Statistics {
-    return Statistics {
-      account_id: "null.near".to_owned().parse().unwrap(),
-      bins_months: Vec::new(),
-      values_months: Vec::new(),
-      bins_years: Vec::new(),
-      values_years: Vec::new()
-    };
+  fn get_statistics(&self, account: AccountId) -> Option<&Statistics> {
+    return self.earn_stats.get(&account);
+    // return Statistics {
+    //   account_id: "null.near".to_owned().parse().unwrap(),
+    //   bins_months: Vec::new(),
+    //   values_months: Vec::new(),
+    //   bins_years: Vec::new(),
+    //   values_years: Vec::new()
+    // };
   }
 
   fn latest_transaction(&self) -> Receipt {

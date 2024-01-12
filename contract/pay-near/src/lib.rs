@@ -26,14 +26,16 @@ mod internal;
 pub struct Contract {
     // greeting: String,
     // We'll add the required ones later. 
-    stats_acc: LookupSet<AccountId>,  // what accounts activated statistics. 
-    statistics: LookupMap<AccountId, Statistics>
+    // stats_acc: LookupSet<AccountId>,  // what accounts activated statistics. 
+    earn_stats: LookupMap<AccountId, Statistics>,
+    spend_stats: LookupMap<AccountId, Statistics>
 }
 
 #[derive(BorshSerialize, BorshStorageKey)]
 enum SKey {
-  StatsAcc,
-  Stats
+  // StatsAcc,
+  EarnStats,
+  SpendStats
 }
 
 
@@ -43,8 +45,9 @@ impl Contract {
     #[init]
     pub fn new() -> Self {
       let mut this = Self {
-        stats_acc: LookupSet::new(SKey::StatsAcc.try_to_vec().unwrap()),
-        statistics: LookupMap::new(SKey::Stats.try_to_vec().unwrap())
+        // stats_acc: LookupSet::new(SKey::StatsAcc.try_to_vec().unwrap()),
+        earn_stats: LookupMap::new(SKey::EarnStats.try_to_vec().unwrap()),
+        spend_stats: LookupMap::new(SKey::SpendStats.try_to_vec().unwrap()),
       };
 
       this
@@ -103,8 +106,20 @@ mod tests {
       // assert_eq!(contract.stats_acc.length, 1);
     }
 
-    // #[test]
-    // fn test_debug() {
-    //   assert_eq!(env::block_timestamp_ms(), 1);
-    // }
+    #[test]
+    fn test_statistics_as_expected() {
+      let mut contract = Contract::new();
+      let mut context = get_context_deposit(accounts(1), 
+        NearToken::from_millinear(750).as_yoctonear()
+      );
+      testing_env!(context.build());
+      contract.activate_statistics();
+
+      let init_stats = contract.get_statistics(accounts(1)).unwrap();
+      assert_eq!(init_stats.bins_months.len(), init_stats.values_months.len());
+      assert_eq!(init_stats.bins_years.len(), init_stats.values_years.len());
+      println!("{:#?}", init_stats);
+
+      // contract.block_timestamp_ms
+    }
 }

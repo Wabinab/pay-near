@@ -8,12 +8,16 @@ mod metadata;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let wasm_arg: &str = &(env::args().nth(1).unwrap());
-    let wasm_filepath = fs::canonicalize(env::current_dir()?.join(wasm_arg))?;
+    // let wasm_arg: &str = &(env::args().nth(1).unwrap());
+    // let wasm_filepath = fs::canonicalize(env::current_dir()?.join(wasm_arg))?;
 
     let worker = workspaces::sandbox().await?;
-    let wasm = std::fs::read(wasm_filepath)?;
+    // let wasm = std::fs::read(wasm_filepath)?;
+    let wasm = std::fs::read("./pay_near.wasm")?;
+    // let wasm = workspaces::compile_project("contract/pay-near").await?;
     let contract = worker.dev_deploy(&wasm).await?;
+    let result = contract.call("new").transact().await?;
+    println!("{:#?}", result);
 
     // create accounts
     let account = worker.dev_create_account().await?;
