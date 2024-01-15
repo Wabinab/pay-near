@@ -18,7 +18,7 @@ export class Tab2Page {
   scannerEnabled = false;
 
   handle_refresh(event: any) {
-
+    event.target.complete();
   }
 
   get account_id() {
@@ -53,28 +53,12 @@ export class Tab2Page {
     if (splitted_value.length != 2) { this.doErr("splitted_value length != 2"); }
     if (splitted_value[0] == '') { this.doErr("Transfer account not specified."); }
     if (parseInt(splitted_value[1]) < 0.001) { this.doErr("Transfer value minimum is 0.001N."); }
-    
 
-    // if (this.walletSvc.contract == null) { this.walletSvc.setup_contract(); }
-    // this.walletSvc.contract?.transfer(
-    //   {
-    //     target: splitted_value[0],
-    //     amount: yocto_amt,
-    //     date: new Date().toISOString()
-    //   },
-    //   "300000000000000", // attached GAS (optional),
-    //   yocto_amt
-    // ).then((res: any) => {
-    //   console.warn(res);
-    //   this.receipt = res;
-    // }, (err: any) => console.error(err));
-
-    const result = await this.walletSvc.call('transfer', {
+    this.receipt = await this.walletSvc.call('transfer', {
       target: splitted_value[0],
-      amount: yocto_amt,
-      date: new Date().toISOString()
+      amount: yocto_amt
     }, yocto_amt ?? "0");
-    console.warn(result);
+    // console.warn(this.receipt);
   }
 
   doErr(err: string) {
@@ -82,7 +66,7 @@ export class Tab2Page {
     console.error(err);
   }
 
-  get_wallet() {
-    console.log(this.walletSvc.wallet);
-  }
+  // get_wallet() {
+  //   console.log(this.walletSvc.wallet);
+  // }
 }

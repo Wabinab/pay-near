@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 // import { setupLedger } from "@near-wallet-selector/ledger";
 import { setupModal } from '@near-wallet-selector/modal-ui';
+import { LoginWalletService } from '../services/login-wallet.service';
 
 @Component({
   selector: 'app-tab3',
@@ -10,39 +11,30 @@ import { setupModal } from '@near-wallet-selector/modal-ui';
   styleUrls: ['tab3.page.scss']
 })
 export class Tab3Page implements OnInit {
+  stats_activated: boolean = true;
 
-  selector: any = null;
-  modalWallet: any;
-  constructor() {}
-
-  // const selector = 
+  constructor(private walletSvc: LoginWalletService) {}
 
   ngOnInit() {
-    // await this.selector();
+    setTimeout(() => this.refresh_actions(), 1000);
   }
 
-  ionViewWillEnter() {
-    setTimeout(() => this.setup(), 500);
+  async handle_refresh(event: any) {
+    await this.refresh_actions();
+
+    event.target.complete();
   }
 
-  async setup() {
-    this.selector = await setupWalletSelector({
-      network: "testnet",
-      modules: [
-        setupMyNearWallet(),
-      ]
+  async refresh_actions() {
+    this.stats_activated = await this.walletSvc.view('stats_activated', {
+      "account": this.account_id
     });
 
-    this.modalWallet = setupModal(this.selector, {
-      contractId: 'guest-book.testnet'
-    });
+    console.warn(this.stats_activated);
   }
 
-  show_wallet() {
-    if (this.modalWallet == undefined) this.setup();
-    // console.log(this.modalWallet);
-    // console.warn(this.selector);
-    this.modalWallet.show();
+  get account_id() {
+    return this.walletSvc.account_id ?? "";
   }
 
 }

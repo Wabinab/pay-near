@@ -20,14 +20,14 @@
   </div>
 
   <div class="d-flex justify-content-center pt-3">
-    <ion-button size="large" (click)="enable_scanner()">Enable</ion-button>
-    <ion-button size="large" (click)="disable_scanner()" color="medium">Disable</ion-button>
+    <ion-button *ngIf="!scannerEnabled" size="large" (click)="enable_scanner()">Enable</ion-button>
+    <ion-button *ngIf="scannerEnabled" size="large" (click)="disable_scanner()" color="medium">Disable</ion-button>
   </div>
    
   <!-- <ion-buttons>
     <ion-button (click)="get_wallet()">Get Wallet</ion-button>
   </ion-buttons> -->
 
-  {{ data }}
+  <!-- {{ data }} -->
   {{ receipt | json }}
 </ion-content>

@@ -19,8 +19,8 @@ export class LoginWalletService {
   state: any;
   account_id: string | null = null;
   wallet: any;
-  contract_id: string = 'dev-1703663376740-50703134012948';
-  contract: any | null = null;
+  contract_id: string = 'dev-1705033899889-69514074347403';
+  // contract: any | null = null;
 
   constructor(private toastSvc: ToastService) {
     setTimeout(() => this.setup(), 500);
@@ -32,10 +32,10 @@ export class LoginWalletService {
       this.toastSvc.present_toast("No active account, cannot setup.", "top", "bg-danger", 5000);
       return;
     }
-    this.contract = new Contract(this.state.accounts.find((acc: any) => acc.active), this.contract_id, {
-      viewMethods: [],
-      changeMethods: ["transfer"]
-    });
+    // this.contract = new Contract(this.state.accounts.find((acc: any) => acc.active), this.contract_id, {
+    //   viewMethods: [],
+    //   changeMethods: ["transfer"]
+    // });
   }
 
   async setup() {
@@ -103,7 +103,7 @@ export class LoginWalletService {
     this.state = null;
     this.account_id = null;
     this.wallet = null;
-    this.contract = null;
+    // this.contract = null;
 
     this.toastSvc.present_toast("Logged out", 'middle', 'bg-success');
     this.double_click = false;
@@ -127,5 +127,20 @@ export class LoginWalletService {
     });
 
     return providers.getTransactionLastResult(outcome);
+  }
+
+  async view(method: string, args = {}) {
+    const { network } = this.selector.options;
+    const provider = new providers.JsonRpcProvider({ url: network.nodeUrl });
+
+    let res: any = await provider.query({
+      request_type: 'call_function',
+      account_id: this.contract_id,
+      method_name: method,
+      args_base64: Buffer.from(JSON.stringify(args)).toString('base64'),
+      finality: 'optimistic',
+    });
+
+    return await JSON.parse(Buffer.from(res.result).toString());
   }
 }

@@ -28,6 +28,10 @@ export class TabsPage {
     return this.walletSvc.account_id ? "Logout" : "Login";
   }
 
+  get is_login() {
+    return this.walletSvc.account_id ? false : true;
+  }
+
   get double_click() {
     return this.walletSvc.double_click;
   }

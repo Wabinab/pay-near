@@ -28,6 +28,7 @@ export class Tab1Page implements OnInit {
   }
 
   handle_refresh(event: any) {
+    event.target.complete();
   }
 
   get account_id() {
