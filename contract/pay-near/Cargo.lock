@@ -1555,9 +1555,9 @@ dependencies = [
 
 [[package]]
 name = "near-helper"
-version = "0.4.1"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e32ab87d99c33e76dc1f0d950ee4bc31881506c46cba1c8daad3565d4b23eb4d"
+checksum = "66fcff3d3220ab7751ea77ad3b24515216834c8af59891b69689a8e66d33ea80"
 
 [[package]]
 name = "near-jsonrpc-client"
@@ -2090,7 +2090,6 @@ dependencies = [
 name = "pay_near"
 version = "1.0.0"
 dependencies = [
- "chrono",
  "near-helper",
  "near-sdk",
  "near-token",

@@ -68,12 +68,15 @@ pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> (
 pub(crate) fn add_stats(target: AccountId, statistics: Option<&Statistics>, remnant: u128
   ) -> Statistics 
 {
-  let date_ms = env::block_timestamp_ms();
-  let datetime = NaiveDateTime::from_timestamp_millis(date_ms as i64)
-    .unwrap_or_else(|| env::panic_str("Cannot unwrap naive date time from timestamp millis")
-  );
-  let year: i32 = datetime.date().year();
-  let month: u32 = datetime.date().month();
+  let date_ms: u64 = env::block_timestamp_ms();
+  // let datetime = NaiveDateTime::from_timestamp_millis(date_ms as i64)
+  //   .unwrap_or_else(|| env::panic_str("Cannot unwrap naive date time from timestamp millis")
+  // );
+  // let year: i32 = datetime.date().year();
+  // let month: u32 = datetime.date().month();
+  let datetime: HashMap<&str, String> = timestamp_millis_to_datetime(date_ms);
+  let year: i32 = datetime.get("year").unwrap().clone().parse().unwrap();
+  let month: u32 = datetime.get("month").unwrap().clone().parse().unwrap();
 
   return match statistics {
     Some(value) => {
