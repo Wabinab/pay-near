@@ -7,7 +7,18 @@ ion-input.custom {
     // --background: gray;
 
     // --border-color: red;
-    --border-width: 0.15em !important;
-    font-size: x-large;
+    --border-width: 0em !important;
+    font-size: 4em;
+    --placeholder-color: #c8c8c8 !important;
     
+}
+
+.container-center {
+    text-align: center;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
 }

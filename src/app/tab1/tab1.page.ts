@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { LoginWalletService } from '../services/login-wallet.service';
 import { Vibration } from '@ionic-native/vibration/ngx';
+import { ToastService } from '../services/toast.service';
 
 
 @Component({
@@ -13,13 +14,16 @@ export class Tab1Page implements OnInit {
   
   myForm: any;
   qr_finalized: boolean = false;
+  min_val = 0.001;
+  max_val = 50_000_000;
 
   constructor(private fb: FormBuilder, private walletSvc: LoginWalletService,
-    private vibration: Vibration) {}
+    private vibration: Vibration, private toastSvc: ToastService) {}
 
   ngOnInit(): void {
     this.myForm = this.fb.group({
-      qr_data: [0, [Validators.required, Validators.min(0.00001), 
+      qr_data: [, [Validators.required, Validators.min(this.min_val), 
+        Validators.max(this.max_val),
         Validators.pattern("^[0-9]+(.[0-9]{0,5})?$")]]
     });
     // this.myForm.get('qr_data').valueChanges.pipe(
@@ -42,7 +46,8 @@ export class Tab1Page implements OnInit {
   get qr_error() {
     var err = this.myForm.get('qr_data').errors ?? {};
     if (err['pattern']) return "Max 5 decimal place, numbers only."
-    if (err['min']) return "Must be larger than 0."
+    if (err['min']) return `Minimum ${this.min_val} per transaction.`
+    if (err['max']) return `Maximum ${this.max_val} per transaction.`;
     return null;
   }
 
@@ -51,7 +56,12 @@ export class Tab1Page implements OnInit {
   }
 
   lock_or_unlock() {
-    if (this.myForm.get('qr_data').errors) return null;
+    if (this.errors) {
+      this.myForm.get('qr_data').markAsDirty();
+      if (this.errors['required']) this.toastSvc.present_toast(`No price`, "top", "bg-danger");
+      else this.toastSvc.present_toast(`Error: ${this.qr_error}`, "top", "bg-danger");
+      return null;
+    }
     if (this.qr_finalized) return this.unlock_price();
     return this.lock_price();
   }
@@ -59,6 +69,11 @@ export class Tab1Page implements OnInit {
   get lock_unlock_name(): string {
     if (this.qr_finalized) return "Unlock";
     else return "Lock"
+  }
+
+  get lock_color(): string {
+    if (this.qr_finalized) return "medium";
+    else return "primary"
   }
 
   lock_price() {

@@ -99,8 +99,8 @@ export class Tab3Page implements OnInit {
       tooltip: {},
       xAxis: { 
         name: "Month Year",
-        data: this._monthbin_alterer(data['bins_months']),
-        // data: this.test_x,
+        // data: this._monthbin_alterer(data['bins_months']),
+        data: this.test_x,
         nameLocation: 'middle',
         nameTextStyle: { padding: [10, 0, 0, 0] }
       },
@@ -112,8 +112,9 @@ export class Tab3Page implements OnInit {
       series: [{
         name: this.curr_seg,
         type: 'bar',
-        data: data['values_months']
-        // data: this.test_y
+        label: { show: true, position: "top", rotate: 90, align: 'left', verticalAlign: 'middle' },
+        // data: data['values_months']
+        data: this.test_y.map(c => c * 2500000)
       }],
       // dataZoom: [{
       //   type: 'slider',

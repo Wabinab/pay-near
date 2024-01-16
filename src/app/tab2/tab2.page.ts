@@ -1,23 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BarcodeFormat } from '@zxing/library';
 import { LoginWalletService } from '../services/login-wallet.service';
 import { utils } from 'near-api-js';
 import { ToastService } from '../services/toast.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
-export class Tab2Page {
+export class Tab2Page implements OnInit {
 
   data: any;
-  constructor(private walletSvc: LoginWalletService, private toastSvc: ToastService) {}
+  constructor(private walletSvc: LoginWalletService, private toastSvc: ToastService,
+    private route: ActivatedRoute, private router: Router) {}
 
   allowedFormats = [BarcodeFormat.QR_CODE]
   scannerEnabled = false;
 
+  async ngOnInit() {
+    await this.load_txhash();
+  }
+
   handle_refresh(event: any) {
+    this.load_txhash();
     event.target.complete();
   }
 
@@ -58,12 +65,35 @@ export class Tab2Page {
       target: splitted_value[0],
       amount: yocto_amt
     }, yocto_amt ?? "0");
-    // console.warn(this.receipt);
+    console.warn(this.receipt);
   }
 
+  private async load_txhash() {
+    const txhash = this.route.snapshot.queryParamMap.get('transactionHashes');
+    console.log(txhash);
+    if (txhash) {
+      this.receipt = await this.walletSvc.getTxRes(txhash);
+      console.warn(this.receipt);
+    }
+  }
+
+  // Clear tx hash. 
+  clear_txhash() {
+    this.router.navigate([], { queryParams: { "transactionHashes": null }, 
+      queryParamsHandling: 'merge'
+    });
+    this.receipt = null;
+  }
+
+  // ===============================================================
   doErr(err: string) {
     this.toastSvc.present_toast(err, "top", "bg-danger", 10000);
     console.error(err);
+  }
+
+  get buttons_class() {
+    if (!this.scannerEnabled && !this.receipt) return "container-center";
+    return "d-flex justify-content-center pt-3";
   }
 
   // get_wallet() {

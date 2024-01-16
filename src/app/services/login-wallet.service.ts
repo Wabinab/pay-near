@@ -130,6 +130,7 @@ export class LoginWalletService {
   }
 
   async view(method: string, args = {}) {
+    if (this.selector == null) await this.setup();
     const { network } = this.selector.options;
     const provider = new providers.JsonRpcProvider({ url: network.nodeUrl });
 
@@ -142,5 +143,14 @@ export class LoginWalletService {
     });
 
     return await JSON.parse(Buffer.from(res.result).toString());
+  }
+
+  async getTxRes(txhash: string) {
+    if (this.selector == null) await this.setup();
+    const { network } = this.selector.options;
+    const provider = new providers.JsonRpcProvider({ url: network.nodeUrl });
+
+    const transaction = await provider.txStatus(txhash, 'unnused');
+    return providers.getTransactionLastResult(transaction);
   }
 }

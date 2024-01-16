@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Receive Money</ion-title>
+    <ion-title>Earn</ion-title>
     <ion-title slot="end">{{ account_id }}</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -10,7 +10,27 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card>
+  <div class="container-center">
+    <ng-container *ngIf="!qr_finalized">
+      <form [formGroup]="myForm" novalidate autocomplete="off">
+        <ion-input fill="outline" label="" formControlName="qr_data" placeholder="0"
+            class="custom" errorText="{{ qr_error }}" type="number"></ion-input>
+      </form>
+    </ng-container>
+
+    <ng-container *ngIf="qr_finalized">
+      <qrcode [qrdata]="qr_data" [elementType]="'img'" [width]="300"></qrcode>
+      <p class="text-center display-4" *ngIf="qr_finalized">{{ qr_data }} N</p>
+    </ng-container>
+
+    <ion-button (click)="lock_or_unlock()" size="large" [color]="lock_color">
+      {{ lock_unlock_name }}
+    </ion-button>
+  </div>
+
+
+
+  <!-- <ion-card>
     <div class="d-flex justify-content-center" *ngIf="qr_finalized">
       <qrcode [qrdata]="qr_data" [elementType]="'img'" [width]="300"></qrcode>
     </div>
@@ -30,5 +50,5 @@
         </div>
       </form>
     </ion-card-content>
-  </ion-card>
+  </ion-card> -->
 </ion-content>
