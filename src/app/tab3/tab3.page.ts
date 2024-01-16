@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import { LoginWalletService } from '../services/login-wallet.service';
 import { utils } from 'near-api-js';
 import { Swiper } from 'swiper/types';
+import type { EChartsOption } from 'echarts';
 
 @Component({
   selector: 'app-tab3',
@@ -10,6 +11,8 @@ import { Swiper } from 'swiper/types';
 })
 export class Tab3Page implements OnInit {
   stats_activated: boolean = true;
+  spend_stats: any;
+  earn_stats: any;
 
   constructor(private walletSvc: LoginWalletService) {}
 
@@ -28,7 +31,16 @@ export class Tab3Page implements OnInit {
       "account": this.account_id
     });
 
-    // console.warn(this.stats_activated);
+    if (this.stats_activated) {
+      this.spend_stats = await this.walletSvc.view('get_spendings', {
+        "account": this.account_id
+      });
+      this.earn_stats = await this.walletSvc.view('get_earnings', {
+        "account": this.account_id
+      });
+
+      this.draw_spend_charts();
+    }
   }
 
   get account_id() {
@@ -46,38 +58,11 @@ export class Tab3Page implements OnInit {
 
   // =================================================
   // Segments
-  segments = ["spendings", "earnings"];
-  curr_seg = this.segments[0];
-  // on_seg_click(segment: string) {
-  //   this.curr_seg = segment;
-  // }
-
-  // seg_index = 1;
-  // swipe_event(event: any) {
-  //   // Swipe left
-  //   if (event.direction == 2) {
-  //     this.seg_index -= 1;
-  //   }
-
-  //   // Swipe right
-  //   if (event.direction == 4) {
-  //     this.seg_index += 1;
-  //   }
-
-  //   // To prevent overswipe.
-  //   if (this.seg_index > this.segments.length) {
-  //     this.seg_index = this.segments.length;
-  //   }
-  //   if (this.seg_index < 0) {
-  //     this.seg_index = 0;
-  //   }
-
-  //   this.curr_seg = this.segments[this.seg_index];
-  // }
-
   @ViewChild('swiper')
   swiperRef: ElementRef | undefined;
   swiper?: Swiper;
+  segments = ["spendings", "earnings"];
+  curr_seg = this.segments[0];
   
   swiper_ready() {
     this.swiper = this.swiperRef?.nativeElement.swiper;
@@ -93,4 +78,46 @@ export class Tab3Page implements OnInit {
     this.swiper?.slideTo(index)
   }
 
+  // ==============================================
+  // Charts
+  month_option: EChartsOption;
+  test_x = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  test_y = [1.5, 3, 4.5, 2.8, 10.7, 12.3, 6.2, 8.5, 1.2, 0.6, 12.3, 5.7];
+
+  draw_spend_charts() {
+    this.month_option = {
+      title: { text: "Spendings By Months", textAlign: "center", left: '50%' },
+      tooltip: {},
+      xAxis: { name: "Month Year",
+      //  data: this._monthbin_alterer(this.spend_stats['bins_months']) 
+        data: this.test_x,
+        nameLocation: 'middle',
+        nameTextStyle: { padding: [10, 0, 0, 0] }
+      },
+      yAxis: { 
+        name: 'Total Paid (NEAR)',
+        nameLocation: 'middle',
+        // nameRotate: "90",
+        nameTextStyle: { padding: [0, 0, 5, 0] },
+      },
+      series: [{
+        name: 'spendings',
+        type: 'bar',
+        // data: this.spend_stats['values_months']
+        data: this.test_y
+      }],
+      // dataZoom: [{
+      //   type: 'slider',
+      //   start: 0,
+      //   end: 5
+      // }]
+    }
+  }
+
+  _monthbin_alterer(bins_months: any[]) {
+    return bins_months.map(c => {
+      var ym = c.split(" ");
+      return `${ym[1].padStart(2, '0')}/${ym[0]}`;
+    });
+  }
 }

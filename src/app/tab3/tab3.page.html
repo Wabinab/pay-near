@@ -32,10 +32,12 @@
 
       <swiper-container #swiper (swiperafterinit)="swiper_ready()" 
       (swiperslidechange)="swiper_slided($event)">
-        <swiper-slide *ngFor="let item of segments">
+        <swiper-slide *ngFor="let seg of segments">
           <ion-card class="no-border">
             <ion-card-content>
-              <p>Mehmeh {{ item }}</p>
+              <ng-template [ngTemplateOutlet]="graphTemplate" 
+                [ngTemplateOutletContext]="{ $implicit: seg }">
+              </ng-template>
             </ion-card-content>
           </ion-card>
         </swiper-slide>
@@ -45,3 +47,12 @@
   </ng-container>
 
 </ion-content>
+
+
+<!-- Template for Graph -->
+<ng-template #graphTemplate let-seg>
+  <p *ngIf="!month_option" class="text-danger text-center">
+    Charts not loaded. Pull down to refresh. 
+  </p>
+  <div echarts [options]="month_option"></div>
+</ng-template>
