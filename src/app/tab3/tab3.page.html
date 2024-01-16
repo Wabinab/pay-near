@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Statistics</ion-title>
+    <ion-title slot="start">Stats</ion-title>
     <ion-title slot="end">{{ account_id }}</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -55,4 +55,5 @@
     Charts not loaded. Pull down to refresh. 
   </p>
   <div echarts [options]="month_option"></div>
+  <div echarts [options]="year_option"></div>
 </ng-template>
