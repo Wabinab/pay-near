@@ -17,8 +17,31 @@
   </ng-container>
 
   <ng-container *ngIf="account_id.trim().length !== 0">
-    <ng-container *ngIf="!stats_activated">
-      <p>Meh</p>
+    <div *ngIf="!stats_activated" class="container-center">
+      <p class="display-6">Stats not activated.</p>
+      <ion-button size="large" (click)="activate_stats()">Activate</ion-button>
+    </div>
+
+    <ng-container *ngIf="stats_activated">
+      <ion-segment [(ngModel)]="curr_seg" value="spendings">
+        <ion-segment-button *ngFor="let item of segments; let i = index"
+        [value]="item" (click)="_segment_sel(i)">
+          <ion-label>{{ item | titlecase }}</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <swiper-container #swiper (swiperafterinit)="swiper_ready()" 
+      (swiperslidechange)="swiper_slided($event)">
+        <swiper-slide *ngFor="let item of segments">
+          <ion-card class="no-border">
+            <ion-card-content>
+              <p>Mehmeh {{ item }}</p>
+            </ion-card-content>
+          </ion-card>
+        </swiper-slide>
+      </swiper-container>
+
     </ng-container>
   </ng-container>
+
 </ion-content>
