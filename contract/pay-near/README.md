@@ -117,3 +117,12 @@ fn latest_transaction(&self, account: AccountId) -> Option<&Receipt>;
 ```bash
 near view pay.near latest_transaction '{"account": "target.near"}'
 ```
+
+### Timestamping
+Sometimes, we want to verify the current timestamp on the contract. The return value have `year`, `month`, `day` (date in javascript), `hour`, `min`, `sec` in the `HashMap` (sometimes called dictionary). 
+```rust
+pub fn get_timestamp(&self) -> HashMap<&str, String>
+```
+```bash
+near view pay.near get_timestamp '{}'
+```

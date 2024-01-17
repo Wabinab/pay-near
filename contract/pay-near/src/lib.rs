@@ -192,7 +192,9 @@ mod tests {
       context2.block_timestamp(3005481373972000);  // approx Feb 05 1970
       testing_env!(context2.build());
       // println!("{:#?}", context2.build().block_timestamp);
-      // let time = contract.get_timestamp();
+      let time = contract.get_timestamp();
+      assert_eq!(time.get("year").unwrap().clone(), "1970".to_owned());
+      assert_eq!(time.get("month").unwrap().clone(), "2".to_owned());
       // println!("Time: {:?}", time);
       // println!("{:?}", context2.build().block_timestamp);
       contract.transfer(accounts(1), U128::from(NearToken::from_near(60).as_yoctonear()));
@@ -219,6 +221,35 @@ mod tests {
       let earn_bob = contract.get_earnings(accounts(2)).unwrap();
       let eby_len = earn_bob.values_years.len();
       assert_eq!(earn_bob.values_years[eby_len-1], "0".to_owned());
+
+      // A few years have pass, but not larger than 10 years;
+      // So we still see it in years, but no more in months. 
+      context2.block_timestamp(200548400000000000);  // May 10, 1976. 
+      testing_env!(context2.build());
+      let time = contract.get_timestamp();
+      assert_eq!(time.get("year").unwrap().clone(), "1976".to_owned());
+      assert_eq!(time.get("month").unwrap().clone(), "5".to_owned());
+      contract.transfer(accounts(1), U128::from(NearToken::from_near(50).as_yoctonear()));
+
+      // Skip spend alice and earn bob. 
+      let earn_alice = contract.get_earnings(accounts(1)).unwrap();
+      let ea_len = earn_alice.values_months.len();
+      assert_eq!(ea_len, 1);
+      assert_eq!(earn_alice.values_months[ea_len-1], "49.95".to_owned());
+      let eay_len = earn_alice.values_years.len();
+      assert_eq!(eay_len, 7);  // 1970 to 1976 inclusive. 
+      let exp_vec: Vec<String> = vec![189.81, 0., 0., 0., 0., 0., 49.95].iter()
+        .map(|c| c.to_string()).collect();
+      assert_eq!(earn_alice.values_years, exp_vec, "FAILED: earn_alice value years after not match.");
+      let spend_bob = contract.get_spendings(accounts(2)).unwrap();
+      let sb_len = spend_bob.values_months.len();
+      assert_eq!(sb_len, 1);
+      assert_eq!(spend_bob.values_months[sb_len-1], "50".to_owned());
+      let sby_len = spend_bob.values_years.len();
+      assert_eq!(sby_len, 7);
+      let exp_vec: Vec<String> = vec![190, 0, 0, 0, 0, 0, 50].iter()
+        .map(|c| c.to_string()).collect();
+      assert_eq!(spend_bob.values_years, exp_vec, "FAILED: spend_bob value years after not match.");
     }
 
     #[test]
