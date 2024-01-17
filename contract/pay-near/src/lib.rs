@@ -28,14 +28,23 @@ pub struct Contract {
     // We'll add the required ones later. 
     // stats_acc: LookupSet<AccountId>,  // what accounts activated statistics. 
     earn_stats: LookupMap<AccountId, Statistics>,
-    spend_stats: LookupMap<AccountId, Statistics>
+    spend_stats: LookupMap<AccountId, Statistics>,
+    final_receipt: LookupMap<AccountId, Receipt>,  // for "earner" only. 
 }
+
+// For migration. 
+// #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
+// pub struct OldState {
+//   earn_stats: LookupMap<AccountId, Statistics>,
+//   spend_stats: LookupMap<AccountId, Statistics>,
+// }
 
 #[derive(BorshSerialize, BorshStorageKey)]
 enum SKey {
   // StatsAcc,
   EarnStats,
-  SpendStats
+  SpendStats,
+  FinalReceipt
 }
 
 
@@ -48,15 +57,27 @@ impl Contract {
         // stats_acc: LookupSet::new(SKey::StatsAcc.try_to_vec().unwrap()),
         earn_stats: LookupMap::new(SKey::EarnStats.try_to_vec().unwrap()),
         spend_stats: LookupMap::new(SKey::SpendStats.try_to_vec().unwrap()),
+        final_receipt: LookupMap::new(SKey::FinalReceipt.try_to_vec().unwrap()),
       };
 
       this
     }
 
-    pub fn get_timestamp(&self) -> u64 {
-      env::block_timestamp_ms()
-    }
+    // NOTE: Private functions can only be called by env::current_account. 
+    // #[private]
+    // #[init(ignore_state)]
+    // pub fn migrate() -> Self {
+    //   let old_state: OldState = env::state_read().unwrap_or_else(|| env::panic_str("failed migration.") );
+
+    //   env::log_str("Migration successful.");
+    //   Self {
+    //     earn_stats: old_state.earn_stats,
+    //     spend_stats: old_state.spend_stats,
+    //     final_receipt: LookupMap::new(SKey::FinalReceipt.try_to_vec().unwrap()),
+    //   }
+    // }
 }
+
 
 /*
  * The rest of this file holds the inline tests for the code above
@@ -115,11 +136,49 @@ mod tests {
       testing_env!(context.build());
       contract.activate_statistics();
 
-      let init_stats = contract.get_statistics(accounts(1)).unwrap();
+      let init_stats = contract.get_earnings(accounts(1)).unwrap();
       assert_eq!(init_stats.bins_months.len(), init_stats.values_months.len());
       assert_eq!(init_stats.bins_years.len(), init_stats.values_years.len());
       println!("{:#?}", init_stats);
+    }
 
-      // contract.block_timestamp_ms
+    #[test]
+    fn test_receipt_as_expected() {
+      let mut contract = Contract::new();
+      let mut context = get_context_deposit(accounts(1), 
+        NearToken::from_millinear(100).as_yoctonear()
+      );
+      testing_env!(context.build());
+      let before_init = contract.latest_transaction(accounts(1));
+      assert_eq!(before_init, None);
+
+      contract.activate_receipt();
+      let after_init = contract.latest_transaction(accounts(1));
+      assert_ne!(after_init, None);
+
+      let context1 = get_context_deposit(accounts(2), 
+        NearToken::from_millinear(100).as_yoctonear()
+      );
+      testing_env!(context1.build());
+      contract.activate_receipt();
+      // Cannot call this below, otherwise will fail with confusing reasonings. 
+      // let before_transfer = contract.latest_transaction(accounts(1));
+
+      let context2 = get_context_deposit(accounts(2), 
+        NearToken::from_near(120).as_yoctonear()
+      );
+      testing_env!(context2.build());
+
+      // Transfer and test change. 
+      contract.transfer(accounts(1), U128::from(NearToken::from_near(100).as_yoctonear()));
+      let after_transfer = contract.latest_transaction(accounts(1)).unwrap();
+      assert_eq!(after_transfer.from, accounts(2));
+      assert_eq!(after_transfer.to, accounts(1));
+      assert_eq!(after_transfer.total, "100 N".to_owned());
+      assert_eq!(after_transfer.charges, "100 mN".to_owned());
+      assert_eq!(after_transfer.final_total, "99.9 N".to_owned());
+      assert_eq!(after_transfer.paid, "120 N".to_owned());
+      assert_eq!(after_transfer.refund, Some("20 N".to_owned()));
+      // assert_eq!(before_transfer.clone(), after_transfer.clone());
     }
 }

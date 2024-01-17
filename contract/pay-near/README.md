@@ -1,100 +1,119 @@
-# Hello NEAR Contract
+# Pay Near Contract
+It's the contract for the payment of near. There are a lot of stuffs not implemented, but here is the minimum lovable product. Also simple. 
 
-The smart contract exposes two methods to enable storing and retrieving a greeting in the NEAR network.
+Here documented all public methods to use the program. 
 
+## Metadata
+Let's first define the two metadatas that some methods return. 
+
+#### Decimal
 ```rust
-const DEFAULT_GREETING: &str = "Hello";
+pub(crate) type Decimal = String;
+```
+(Nothing to explain)
 
-#[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
-pub struct Contract {
-    greeting: String,
-}
-
-impl Default for Contract {
-    fn default() -> Self {
-        Self { greeting: DEFAULT_GREETING.to_string() }
-    }
-}
-
-#[near_bindgen]
-impl Contract {
-    // Public: Returns the stored greeting, defaulting to 'Hello'
-    pub fn get_greeting(&self) -> String {
-        return self.greeting.clone();
-    }
-
-    // Public: Takes a greeting, such as 'howdy', and records it
-    pub fn set_greeting(&mut self, greeting: String) {
-        // Record a log permanently to the blockchain!
-        log!("Saving greeting {}", greeting);
-        self.greeting = greeting;
-    }
+#### Receipt
+When you call `transfer`, it'll generate a receipt, just like the receipt your receive when you bought something. Unfortunately, this receipt isn't saved anywhere, so you can't refer back to it. The idea is to use the blockchain's transaction history as permanent receipt, and this is just for display purpose. 
+```rust
+pub struct Receipt {
+  pub from: AccountId,
+  pub to: AccountId,
+  pub total: Decimal,
+  pub charges: Decimal,
+  pub final_total: Decimal,  
+  pub paid: Decimal,
+  pub refund: Option<Decimal>
 }
 ```
+`total` is the `amount` in `transfer` call, then the contract charges 0.1% of this `total` (capped at 0.1 NEAR), and the `final_total` are what's transferred to the recipient (`to` field). `paid` is how much you attach to the function; if you attach less than `total`, it'll fail and complain; if you attach more than `total`, it'll `refund` you the extra attached. 
 
-<br />
+#### Statistics
+If you activate statistics, you can see what you have earn and spent (hence two `Statistics` are kept). With a lot of considerations, one decide to keep it as simple as possible, only tracking the past 12 months and past 10 years; anything before will be wiped out. 
+```rust
+pub struct Statistics {
+  pub account_id: AccountId,
+  pub bins_months: Vec<String>,  // last 12 months
+  pub values_months: Vec<Decimal>,
+  pub bins_years: Vec<String>,  // last 10 years
+  pub values_years: Vec<Decimal>
+}
+```
+The `bins_months` are saved as `year month`, e.g. `2021 1` means January 2021. The `values_months` are same length as `bins_months`, and they mapped exactly by index. Similarly, for `values_years` and `bins_years`; and `bins_years` are saved as `year`, e.g. `2023`. 
 
-# Quickstart
+## Methods
+We haven't define the contract name yet, so let's call it `pay.near` for now (which we won't use since it's already being used). We'll show both the rust signature and NEAR CLI signature if you decide to call it yourself. 
 
-1. Make sure you have installed [rust](https://rust.org/).
-2. Install the [`NEAR CLI`](https://github.com/near/near-cli#setup)
-
-<br />
-
-## 1. Build, Test and Deploy
-To build the contract you can execute the `./build.sh` script, which will in turn run:
-
+#### transfer
+Transfer money from whoever call this function to the target. If you attached more money than the `amount` stated, the rest will be refunded, and it'll be displayed `Receipt`'s `refund`. 
+```rust
+fn transfer(&mut self, target: AccountId, amount: U128) -> Receipt;
+```
 ```bash
-rustup target add wasm32-unknown-unknown
-cargo build --target wasm32-unknown-unknown --release
+near call pay.near transfer '{"target": "target.near", "amount": "1000000000000000000000000"}' --accountId yourname.near --amount 1
 ```
 
-Then, run the `./deploy.sh` script, which will in turn run:
-
+#### activate_statistics
+To use statistics, you have to deposit some storage cost. It accepts 0.75N minimum, but if you're generous, you can donate up to 1N; anything more will be refunded. 
+```rust
+fn activate_statistics(&mut self);
+```
 ```bash
-near dev-deploy --wasmFile ./target/wasm32-unknown-unknown/release/hello_near.wasm
+near call pay.near activate_statistics '{}' --accountId yourname.near --amount 0.75
 ```
 
-the command [`near dev-deploy`](https://docs.near.org/tools/near-cli#near-dev-deploy) automatically creates an account in the NEAR testnet, and deploys the compiled contract on it.
-
-Once finished, check the `./neardev/dev-account` file to find the address in which the contract was deployed:
-
+#### stats_activated
+Check if a specific accountId have activate statistics or not. 
+```rust
+fn stats_activated(&self, account: AccountId) -> bool;
+```
 ```bash
-cat ./neardev/dev-account
-# e.g. dev-1659899566943-21539992274727
+near view pay.near stats_activated '{"account": "target.near"}'
 ```
 
-<br />
-
-## 2. Retrieve the Greeting
-
-`get_greeting` is a read-only method (aka `view` method).
-
-`View` methods can be called for **free** by anyone, even people **without a NEAR account**!
-
+#### get_earnings
+Get how much money specific `account` received via `transfer` call. All earnings recorded **exclude charges** (i.e. `final_total` in `Receipt`). If stats not activated, will return `null`. 
+```rust
+fn get_earnings(&self, account: AccountId) -> Option<&Statistics>;
+```
 ```bash
-# Use near-cli to get the greeting
-near view <dev-account> get_greeting
+near view pay.near get_earnings '{"account": "target.near"}'
 ```
 
-<br />
-
-## 3. Store a New Greeting
-`set_greeting` changes the contract's state, for which it is a `change` method.
-
-`Change` methods can only be invoked using a NEAR account, since the account needs to pay GAS for the transaction. In this case, we are asking the account we created in step 1 to sign the transaction.
-
+#### get_spendings
+Get how much money specific `account` spend via `transfer` call. All spendings recorded **include charges** (i.e. `total` in `Receipt`). If stats not activated, will return `null`.
+```rust
+fn get_spendings(&self, account: AccountId) -> Option<&Statistics>;
+```
 ```bash
-# Use near-cli to set a new greeting
-near call <dev-account> set_greeting '{"greeting":"howdy"}' --accountId <dev-account>
+near view pay.near get_spendings '{"account": "target.near"}'
 ```
 
-**Tip:** If you would like to call `set_greeting` using your own account, first login into NEAR using:
+### Receipt
+As a receiver, if someone `transfer` to you, you won't know if they have successfully transfer to you, as whatever returned from `transfer` function is only viewable in the person who's making the transfer. To view such receipt from the receiving person, you need to `activate_receipt`. This will save **only the latest transaction `Receipt`** in store. In your frontend, you can check when the receipt changes, or receipt `total` matches what you expected to receive (though you only receive `final_total`, that's another story), or any other clever way you can think of. Note, this is only for single transaction; if you are receiving from multiple people, it'll also change, but you see how you want to trigger frontend as we only save the last transaction's `Receipt`.
 
+#### activate_receipt
+To use receipt, you have to deposit some storage cost. It accepts 0.1N minimum, but if you're generous, you can donate up to 0.2N; anything more will be refunded. 
+```rust
+fn activate_receipt(&mut self);
+```
 ```bash
-# Use near-cli to login your NEAR account
-near login
+near call pay.near activate_receipt '{}' --accountId yourname.near --deposit 0.1
 ```
 
-and then use the logged account to sign the transaction: `--accountId <your-account>`.
+#### receipt_activated
+Whether the person had `activate_receipt` or not. 
+```rust
+fn receipt_activated(&self, account: AccountId) -> bool;
+```
+```bash
+near view pay.near receipt_activated '{"account": "target.near"}'
+```
+
+#### latest_transaction
+(Explanation already mentioned above), get the latest transaction for the **recipient account**. (If you're the one paying, you see the return value from corresponding transaction hashes, or transaction history in your wallet). If receipt not activated, return `null` instead. 
+```rust
+fn latest_transaction(&self, account: AccountId) -> Option<&Receipt>;
+```
+```bash
+near view pay.near latest_transaction '{"account": "target.near"}'
+```

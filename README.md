@@ -39,3 +39,9 @@ Example, this crate `parity-secp256k1` was yanked in deprecation, but `near-sdk-
 [patch.crates-io]
 parity-secp256k1 = {git = "https://github.com/paritytech/rust-secp256k1"}
 ```
+
+### Deal with near wallet selector: 
+Near wallet selector call and view methods are available at [Github hello-near-js](https://github.com/near-examples/hello-near-js/blob/master/frontend/near-wallet.js)
+
+### Deal with migration
+State migration can be found in this [near documentation](https://docs.near.org/tutorials/examples/update-contract-migrate-state). `#[private]` means the function can only be called by `env::current_account_id()` (which is the account that hold the contract). 

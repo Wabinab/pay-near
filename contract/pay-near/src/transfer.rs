@@ -11,7 +11,9 @@ pub trait Transfer {
   fn get_spendings(&self, account: AccountId) -> Option<&Statistics>;
 
   // Check latest: whether transaction finished. 
-  // fn latest_transaction(&self) -> Receipt;
+  fn activate_receipt(&mut self);
+  fn receipt_activated(&self, account: AccountId) -> bool;
+  fn latest_transaction(&self, account: AccountId) -> Option<&Receipt>;
 }
 
 #[near_bindgen]
@@ -35,14 +37,19 @@ impl Transfer for Contract {
       self.earn_stats.insert(target.clone(), stats);
     }
     if self.spend_stats.contains_key(&contract_caller) {
-      let old_stats = self.spend_stats.get(&target);
+      let old_stats = self.spend_stats.get(&contract_caller);
       let stats = add_stats(contract_caller.clone(), old_stats, amount);
       self.spend_stats.insert(contract_caller.clone(), stats);
+    }
+    // Receipt is for receiver to detect a change in value. 
+    if self.final_receipt.contains_key(&target) {
+      self.final_receipt.insert(target.clone(), receipt.clone());
     }
 
     return receipt;
   }
 
+  // =========================================================================
   #[payable]
   fn activate_statistics(&mut self) {
     let caller = env::predecessor_account_id();
@@ -80,15 +87,43 @@ impl Transfer for Contract {
     return self.spend_stats.get(&account);
   }
 
-  // fn latest_transaction(&self) -> Receipt {
-  //   return Receipt { 
-  //       from: "null.near".to_owned().parse().unwrap(),
-  //       to: "null.near".to_owned().parse().unwrap(),
-  //       total: "0".to_owned(),
-  //       charges: "0".to_owned(),
-  //       final_total: "0".to_owned(),
-  //       paid: "0".to_owned(),
-  //       refund: None
-  //   };
-  // }
+  // =================================================================
+  #[payable]
+  fn activate_receipt(&mut self) {
+    let caller = env::predecessor_account_id();
+
+    if self.final_receipt.contains_key(&caller) { env::panic_str("Account already activated."); }
+    let deposit = NearToken::from_yoctonear(env::attached_deposit());
+
+    if deposit < NearToken::from_millinear(100) {
+      env::panic_str("Requires 0.1N to 0.2N (your choice) for storage.");
+    }
+    // Refund if more than 0.2N attached.
+    if deposit > NearToken::from_millinear(200) {
+      let refund_amt = deposit.checked_sub(NearToken::from_millinear(200)).unwrap_or_else(||
+        env::panic_str("activate_receipt: Deposit refund_amt cannot subtract.")
+      );
+      refund(refund_amt.as_yoctonear());
+    }
+
+    // The first receipt is null. 
+    let receipt = Receipt { 
+        from: "null.near".to_owned().parse().unwrap(),
+        to: "null.near".to_owned().parse().unwrap(),
+        total: "0".to_owned(),
+        charges: "0".to_owned(),
+        final_total: "0".to_owned(),
+        paid: "0".to_owned(),
+        refund: None
+    };
+    self.final_receipt.insert(caller, receipt);
+  }
+
+  fn receipt_activated(&self, account: AccountId) -> bool {
+    return self.final_receipt.contains_key(&account);
+  }
+
+  fn latest_transaction(&self, account: AccountId) -> Option<&Receipt> {
+    return self.final_receipt.get(&account);
+  }
 }
