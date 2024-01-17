@@ -61,8 +61,10 @@
   </div>
 
   <div [class]="buttons_class">
-    <ion-button *ngIf="!scannerEnabled && !receipt" size="large" (click)="enable_scanner()">Open Camera</ion-button>
-    <ion-button *ngIf="scannerEnabled && !receipt" size="large" (click)="disable_scanner()" color="medium">Close Camera</ion-button>
+    <ion-button *ngIf="!scannerEnabled && !receipt" size="large" (click)="enable_scanner()"><ion-icon name="camera-outline"></ion-icon></ion-button>
+    <ion-button *ngIf="scannerEnabled && !receipt" size="large" (click)="disable_scanner()" color="medium">
+      <ion-icon name="trash-outline"></ion-icon> <ion-icon name="camera-outline"></ion-icon>
+    </ion-button>
     <ion-button *ngIf="receipt" size="large" (click)="clear_txhash()" color="medium">Dismiss</ion-button>
   </div>
    

@@ -15,9 +15,13 @@ export class Tab3Page implements OnInit {
   spend_stats: any;
   earn_stats: any;
 
+  month_unit: string;
+  year_unit: string = "";
+
   constructor(private walletSvc: LoginWalletService, private titlePipe: TitleCasePipe) {}
 
   ngOnInit() {
+    this.month_unit = "";
     setTimeout(() => this.refresh_actions(), 1000);
   }
 
@@ -39,6 +43,8 @@ export class Tab3Page implements OnInit {
       this.earn_stats = await this.walletSvc.view('get_earnings', {
         "account": this.account_id
       });
+      console.log(this.spend_stats);
+      console.warn(this.earn_stats);
 
       this.draw_charts();
     }
@@ -94,8 +100,12 @@ export class Tab3Page implements OnInit {
   }
 
   _internal_draw_chart(data: any) {
+    // Must be converted first, otherwise month_unit don't update. 
+    const month_data = this._convert_values(this.test_y.map(c => c * 2500318.24), "month");
     this.month_option = {
-      title: { text: this.titlePipe.transform(`${this.curr_seg} by months`), textAlign: "center", left: '50%' },
+      title: { text: this.titlePipe.transform(`${this.curr_seg} by months in `) + `${this.month_unit}N`, 
+        textAlign: "center", left: '50%' 
+      },
       tooltip: {},
       xAxis: { 
         name: "Month Year",
@@ -105,7 +115,7 @@ export class Tab3Page implements OnInit {
         nameTextStyle: { padding: [10, 0, 0, 0] }
       },
       yAxis: { 
-        name: `Total ${this._paid_earn(this.curr_seg)} (NEAR)`,
+        name: `Total ${this._paid_earn(this.curr_seg)} (${this.month_unit}N)`,
         // nameLocation: 'middle',
         nameTextStyle: { padding: [0, 0, 0, 50] },
       },
@@ -114,7 +124,7 @@ export class Tab3Page implements OnInit {
         type: 'bar',
         label: { show: true, position: "top", rotate: 90, align: 'left', verticalAlign: 'middle' },
         // data: data['values_months']
-        data: this.test_y.map(c => c * 2500000)
+        data: month_data
       }],
       // dataZoom: [{
       //   type: 'slider',
@@ -123,8 +133,11 @@ export class Tab3Page implements OnInit {
       // }]
     };
 
+    const year_data = this._convert_values(data['values_years'], "year");
     this.year_option = {
-      title: { text: this.titlePipe.transform(`${this.curr_seg} by years`), textAlign: "center", left: '50%' },
+      title: { text: this.titlePipe.transform(`${this.curr_seg} by years in `) + `${this.year_unit}N`, 
+        textAlign: "center", left: '50%' 
+      },
       tooltip: {},
       xAxis: { 
         name: "Year", 
@@ -133,7 +146,7 @@ export class Tab3Page implements OnInit {
         nameTextStyle: { padding: [10, 0, 0, 0] }
       },
       yAxis: {
-        name: `Total ${this._paid_earn(this.curr_seg)} (NEAR)`,
+        name: `Total ${this._paid_earn(this.curr_seg)} (${this.year_unit}N)`,
         // nameLocation: 'middle',
         nameTextStyle: { padding: [0, 0, 0, 50] },
       },
@@ -141,14 +154,14 @@ export class Tab3Page implements OnInit {
         name: this.curr_seg,
         type: 'bar',
         color: '#b35fbe',
-        data: data['values_years']
+        data: year_data
       }],
     };
   }
 
   _monthbin_alterer(bins_months: any[]) {
     return bins_months.map(c => {
-      var ym = c.split(" ");
+      let ym = c.split(" ");
       return `${ym[1].padStart(2, '0')}/${ym[0]}`;
     });
   }
@@ -156,5 +169,35 @@ export class Tab3Page implements OnInit {
   _paid_earn(seg: string) {
     if (seg == this.segments[0]) return "Paid";
     return "Earn";
+  }
+
+  // convert unit based on median non-zero values
+  _convert_values(values: any[], type: "month" | "year") {
+    const median = this._find_median(values.map(c => parseFloat(c)));
+    if (median > 1_000_000_000) {
+      this._set_units(type, "B");
+      return values.map(c => Math.round(parseFloat(c) / 1_000_000_000))
+    }
+    if (median > 1_000_000) {
+      this._set_units(type, "M");
+      return values.map(c => Math.round(parseFloat(c) / 1_000_000));
+    }
+    if (median > 1000) {
+      this._set_units(type, "k");
+      return values.map(c => Math.round(parseFloat(c) / 1000));
+    }
+    this._set_units(type, "");
+    return values;
+  }
+
+  _set_units(type: "month" | "year", unit_type: string) {
+    if (type == "month") this.month_unit = unit_type;
+    else this.year_unit = unit_type;
+  }
+
+  _find_median(arr: number[]) {
+    const mid = Math.floor(arr.length / 2);
+    const values = [...arr].sort((a, b) => a - b);
+    return arr.length % 2 !== 0 ? values[mid] : (values[mid - 1] + values[mid]) / 2;
   }
 }

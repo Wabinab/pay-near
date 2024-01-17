@@ -54,6 +54,14 @@
   <p *ngIf="!month_option" class="text-danger text-center">
     Charts not loaded. Pull down to refresh. 
   </p>
-  <div echarts [options]="month_option"></div>
-  <div echarts [options]="year_option"></div>
+  <div echarts [options]="month_option">
+    <ion-refresher slot="fixed" (ionRefresh)="handle_refresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+  </div>
+  <div echarts [options]="year_option">
+    <ion-refresher slot="fixed" (ionRefresh)="handle_refresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+  </div>
 </ng-template>

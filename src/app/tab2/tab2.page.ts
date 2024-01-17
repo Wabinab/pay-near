@@ -92,7 +92,7 @@ export class Tab2Page implements OnInit {
   }
 
   get buttons_class() {
-    if (!this.scannerEnabled && !this.receipt) return "container-center";
+    if (!this.scannerEnabled && !this.receipt) return "container-bottom";
     return "d-flex justify-content-center pt-3";
   }
 

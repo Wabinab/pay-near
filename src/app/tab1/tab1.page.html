@@ -10,6 +10,13 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
+  <div class="bg-danger">
+    <h3 class="text-center text-light">
+      Warning! Check payment destination is "{{ contract_id }}"
+    </h3>
+  </div>
+
+
   <div class="container-center">
     <ng-container *ngIf="!qr_finalized">
       <form [formGroup]="myForm" novalidate autocomplete="off">
@@ -24,31 +31,9 @@
     </ng-container>
 
     <ion-button (click)="lock_or_unlock()" size="large" [color]="lock_color">
-      {{ lock_unlock_name }}
+      <!-- {{ lock_unlock_name }} -->
+      <ion-icon [name]="lock_unlock_name"></ion-icon>
     </ion-button>
   </div>
 
-
-
-  <!-- <ion-card>
-    <div class="d-flex justify-content-center" *ngIf="qr_finalized">
-      <qrcode [qrdata]="qr_data" [elementType]="'img'" [width]="300"></qrcode>
-    </div>
-
-    <ion-card-header>
-      <ion-card-title class="text-center display-4" *ngIf="qr_finalized">{{ qr_data }}</ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content>
-      <form [formGroup]="myForm" novalidate autocomplete="off">
-        <div class="d-flex justify-content-center">
-          <ion-input fill="outline" label="Price" formControlName="qr_data" 
-            class="custom" errorText="{{ qr_error }}" type="number"></ion-input>
-          <ion-button slot="end" (click)="lock_or_unlock()" size="large">
-            {{ lock_unlock_name }}
-          </ion-button>
-        </div>
-      </form>
-    </ion-card-content>
-  </ion-card> -->
 </ion-content>
