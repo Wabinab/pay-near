@@ -114,7 +114,7 @@ pub(crate) fn add_stats(target: AccountId, statistics: Option<&Statistics>, remn
       // make bins_months as key, values_months as value (dictionary)
       // for each regenerated value, check for values in old ones. 
       let bin_months = create_month_bins(&month, &year);
-      stats.bins_months = bin_months.clone();
+      // stats.bins_months = bin_months.clone();
 
       let zipped_month = old_stats.bins_months.iter().zip(old_stats.values_months.iter());
       let mapped_month = zipped_month.collect::<HashMap<_, _>>();
@@ -130,10 +130,23 @@ pub(crate) fn add_stats(target: AccountId, statistics: Option<&Statistics>, remn
       new_values_month[val_len] = checked_add(new_values_month.last().unwrap(), 
         yoctonear_to_near(remnant.clone())
       ).unwrap_or_else(|_| env::panic_str("cannot add new_values_month."));
-      stats.values_months = new_values_month;
+      // stats.values_months = new_values_month.clone();
+
+      // if lead with zeros, remove. 
+      // Because newest to the right, so older statistics that are zero
+      // isn't worth looking. 
+      let idx_opt = leading_zeros(new_values_month.clone());
+      stats.values_months = match idx_opt {
+        Some(idx)  => new_values_month[idx..].to_vec(),
+        None => new_values_month
+      };
+      stats.bins_months = match idx_opt {
+        Some(idx) => bin_months[idx..].to_vec(),
+        None => bin_months
+      };
 
       let bin_years = create_year_bins(&year);
-      stats.bins_years = bin_years.clone();
+      // stats.bins_years = bin_years.clone();
 
       let zipped_year = old_stats.bins_years.iter().zip(old_stats.values_years.iter());
       let mapped_year = zipped_year.collect::<HashMap<_, _>>();
@@ -149,7 +162,19 @@ pub(crate) fn add_stats(target: AccountId, statistics: Option<&Statistics>, remn
       new_values_year[val_len] = checked_add(new_values_year.last().unwrap(), 
         yoctonear_to_near(remnant.clone())
       ).unwrap_or_else(|_| env::panic_str("cannot add new_values_year."));
-      stats.values_years = new_values_year;
+      // stats.values_years = new_values_year;
+
+      // Remove leading zeros
+      let idx_opt = leading_zeros(new_values_year.clone());
+      stats.values_years = match idx_opt {
+        Some(idx) => new_values_year[idx..].to_vec(),
+        None => new_values_year
+      };
+      stats.bins_years = match idx_opt {
+        Some(idx) => bin_years[idx..].to_vec(),
+        None => bin_years
+      };
+      // stats.values_years = new_values_year.clone();
 
       return stats;
     },
@@ -187,6 +212,7 @@ fn create_month_bins(month: &u32, year: &i32) -> Vec<String> {
     month -= 1;
   }
 
+  bins.reverse();
   return bins;
 }
 
@@ -195,5 +221,11 @@ fn year_bin(year: &i32) -> String {
 }
 
 fn create_year_bins(year: &i32) -> Vec<String> {
-  return (0..10).map(|i| year_bin(&(year - i))).collect();
+  let mut values: Vec<String> = (0..10).map(|i| year_bin(&(year - i))).collect();
+  values.reverse();
+  return values;
+}
+
+fn leading_zeros(arr: Vec<Decimal>) -> Option<usize> {
+  arr.iter().position(|x| x != &"0".to_owned())
 }
