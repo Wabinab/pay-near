@@ -13,7 +13,8 @@ pub struct Receipt {
   pub charges: Decimal,
   pub final_total: Decimal,  // total - charges. Exclude gas fee. 
   pub paid: Decimal,
-  pub refund: Option<Decimal>
+  pub refund: Option<Decimal>,
+  pub datetime: String,  // ISO 8601 format. 
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone, Debug)]

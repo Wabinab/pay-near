@@ -45,3 +45,6 @@ Near wallet selector call and view methods are available at [Github hello-near-j
 
 ### Deal with migration
 State migration can be found in this [near documentation](https://docs.near.org/tutorials/examples/update-contract-migrate-state). `#[private]` means the function can only be called by `env::current_account_id()` (which is the account that hold the contract). 
+
+### Caveat with `LookupMap`
+Well, since we can't loop, it also means it's not migrate-able; unless you save it as an unorderedmap instead, which is loopable by keys. 

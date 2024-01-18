@@ -37,6 +37,7 @@ pub struct Contract {
 // pub struct OldState {
 //   earn_stats: LookupMap<AccountId, Statistics>,
 //   spend_stats: LookupMap<AccountId, Statistics>,
+//   final_receipt: LookupMap<AccountId, OldReceipt>,
 // }
 
 #[derive(BorshSerialize, BorshStorageKey)]
@@ -77,7 +78,7 @@ impl Contract {
     //   Self {
     //     earn_stats: old_state.earn_stats,
     //     spend_stats: old_state.spend_stats,
-    //     final_receipt: LookupMap::new(SKey::FinalReceipt.try_to_vec().unwrap()),
+    //     final_receipt: ,
     //   }
     // }
 }
@@ -290,5 +291,14 @@ mod tests {
       assert_eq!(after_transfer.paid, "120 N".to_owned());
       assert_eq!(after_transfer.refund, Some("20 N".to_owned()));
       // assert_eq!(before_transfer.clone(), after_transfer.clone());
+    }
+
+    #[test]
+    #[should_panic(expected = "Requires 0.1N to 0.2N (your choice) for storage.")]
+    fn test_activate_receipt_no_deposit_panic() {
+      let mut contract = Contract::new();
+      let mut context = get_context(accounts(1));
+      testing_env!(context.build());
+      contract.activate_receipt();
     }
 }

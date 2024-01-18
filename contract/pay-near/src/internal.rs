@@ -42,7 +42,8 @@ pub(crate) fn handle_transfer(total: u128, target: AccountId, refund: u128) -> (
     charges:  to_human(fee.as_yoctonear()),  
     final_total: to_human(remnant.as_yoctonear()), 
     paid: "".to_owned(),
-    refund: _refund
+    refund: _refund,
+    datetime: get_current_datetime()
   }, 
   remnant.as_yoctonear());
 }
@@ -190,6 +191,14 @@ pub(crate) fn add_stats(target: AccountId, statistics: Option<&Statistics>, remn
       return stats;
     }
   };
+}
+
+pub(crate) fn get_current_datetime() -> String {
+  let t = timestamp_millis_to_datetime(env::block_timestamp_ms());
+  return format!("{}-{}-{}T{}:{}:{}Z", 
+    t.get("year").unwrap(), t.get("month").unwrap(), t.get("day").unwrap(),
+    t.get("hour").unwrap(), t.get("min").unwrap(), t.get("sec").unwrap()
+  );
 }
 
 // ================================================

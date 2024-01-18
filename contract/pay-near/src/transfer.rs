@@ -114,7 +114,8 @@ impl Transfer for Contract {
         charges: "0".to_owned(),
         final_total: "0".to_owned(),
         paid: "0".to_owned(),
-        refund: None
+        refund: None,
+        datetime: get_current_datetime()
     };
     self.final_receipt.insert(caller, receipt);
   }
