@@ -12,7 +12,7 @@
 
   <div class="bg-danger">
     <h3 class="text-center text-light">
-      Warning! Check payment destination is "{{ contract_id }}"
+      Warning! Check payment destination: "{{ contract_id }}"
     </h3>
   </div>
 
@@ -34,6 +34,24 @@
       <!-- {{ lock_unlock_name }} -->
       <ion-icon [name]="lock_unlock_name"></ion-icon>
     </ion-button>
+  </div>
+
+  <div class="container-bottom">
+    <ng-container *ngIf="!receipt_activated">
+      <ion-button (click)="activate_receipt()" size="large" color="secondary">
+        <ion-icon name="receipt-outline"></ion-icon>
+      </ion-button>
+      <br>
+      <span>To display receipt when someone paid.</span>
+    </ng-container>
+
+    <ng-container *ngIf="receipt_activated">
+      <ion-toggle [checked]="is_single" (ionChange)="on_single_change()">
+        {{ is_single_name }}
+      </ion-toggle>
+      <!-- Add some paddings to move it up.  -->
+      <div class="pt-3"></div>
+    </ng-container>
   </div>
 
 </ion-content>

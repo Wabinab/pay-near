@@ -43,8 +43,8 @@ export class Tab3Page implements OnInit {
       this.earn_stats = await this.walletSvc.view('get_earnings', {
         "account": this.account_id
       });
-      console.log(this.spend_stats);
-      console.warn(this.earn_stats);
+      // console.log(this.spend_stats);
+      // console.warn(this.earn_stats);
 
       this.draw_charts();
     }
@@ -82,8 +82,8 @@ export class Tab3Page implements OnInit {
   }
 
   _segment_sel(index: number) {
-    if (!this.swiper) { this.swiper_ready(); }
-    this.swiper?.slideTo(index)
+    if (!this.swiper || this.swiper?.destroyed) { this.swiper_ready(); }
+    this.swiper?.slideTo(index, 500);
     // this.draw_charts();  // will call swiper_slided automatically when this swipe. 
   }
 
@@ -101,7 +101,7 @@ export class Tab3Page implements OnInit {
 
   _internal_draw_chart(data: any) {
     // Must be converted first, otherwise month_unit don't update. 
-    const month_data = this._convert_values(this.test_y.map(c => c * 2500318.24), "month");
+    const month_data = this._convert_values(data['values_months'], "month");
     this.month_option = {
       title: { text: this.titlePipe.transform(`${this.curr_seg} by months in `) + `${this.month_unit}N`, 
         textAlign: "center", left: '50%' 
@@ -109,8 +109,8 @@ export class Tab3Page implements OnInit {
       tooltip: {},
       xAxis: { 
         name: "Month Year",
-        // data: this._monthbin_alterer(data['bins_months']),
-        data: this.test_x,
+        data: this._monthbin_alterer(data['bins_months']),
+        // data: this.test_x,
         nameLocation: 'middle',
         nameTextStyle: { padding: [10, 0, 0, 0] }
       },
@@ -153,6 +153,7 @@ export class Tab3Page implements OnInit {
       series: [{
         name: this.curr_seg,
         type: 'bar',
+        label: { show: true, position: "top", rotate: 90, align: 'left', verticalAlign: 'middle' },
         color: '#b35fbe',
         data: year_data
       }],

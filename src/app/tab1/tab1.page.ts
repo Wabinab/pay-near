@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { LoginWalletService } from '../services/login-wallet.service';
 import { Vibration } from '@ionic-native/vibration/ngx';
 import { ToastService } from '../services/toast.service';
+import { utils } from 'near-api-js';
+import { Subscription, interval } from 'rxjs';
 
 
 @Component({
@@ -10,29 +12,44 @@ import { ToastService } from '../services/toast.service';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page implements OnInit {
+export class Tab1Page implements OnInit, OnDestroy {
   
   myForm: any;
   qr_finalized: boolean = false;
   min_val = 0.001;
   max_val = 50_000_000;
+  single_interval = 1_500;
+
+  receipt_activated: boolean = true;  // button not display initially. 
 
   constructor(private fb: FormBuilder, private walletSvc: LoginWalletService,
     private vibration: Vibration, private toastSvc: ToastService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.myForm = this.fb.group({
       qr_data: [, [Validators.required, Validators.min(this.min_val), 
         Validators.max(this.max_val),
         Validators.pattern("^[0-9]+(.[0-9]{0,5})?$")]]
     });
-    // this.myForm.get('qr_data').valueChanges.pipe(
-    //   map((val) => (console.log(this.myForm.get('qr_data').errors)))
-    // ).subscribe();
+    this.source = interval(this.single_interval);
+    setTimeout(() => this.refresh_fn(), 1000);
   }
 
-  handle_refresh(event: any) {
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  async handle_refresh(event: any) {
+    await this.refresh_fn(); 
+
     event.target.complete();
+  }
+
+  async refresh_fn() {
+    this.receipt_activated = await this.walletSvc.view('receipt_activated', {
+      "account": this.walletSvc.account_id
+    });
+    // console.warn(this.receipt_activated);
   }
 
   get account_id() {
@@ -85,6 +102,12 @@ export class Tab1Page implements OnInit {
   lock_price() {
     this.qr_finalized = true;
     this.myForm.get('qr_data').disable();
+
+    if (this.is_single) {
+      this.receipt_updated = false;
+      this.detect_receipt();
+      this.set_old_receipt();
+    }
   }
 
   unlock_price() {
@@ -92,5 +115,94 @@ export class Tab1Page implements OnInit {
     this.vibration.vibrate([300, 500, 800]);
     this.qr_finalized = false;
     this.myForm.get('qr_data').enable();
+    
+    if (this.is_single) {
+      this.stop_detect_receipt();
+    }
+  }
+
+  // =====================================================
+  activate_receipt() {
+    this.walletSvc.call('activate_receipt', {}, utils.format.parseNearAmount("0.1") ?? "0")
+  }
+
+  // ======================================================
+  // If is_single, will only accept single payment before page changed to display
+  // receipt once it detected. If not, it'll allow multiple payments and NEVER change
+  // receipt. 
+  is_single: boolean = true;  
+  old_receipt: any;
+  receipt_updated: boolean = false;
+  timeout_count = 0;
+  threshold_timeout = Math.round(300_000 / 1_500);
+
+  get is_single_name() {
+    return this.is_single ? "Only one payment" : "Accept multiple payments";
+  }
+
+  on_single_change() {
+    this.is_single = !this.is_single;
+  }
+
+  source: any;
+  subscription: Subscription;
+  detect_receipt() {
+    this.subscription = this.source.subscribe((_: any) => this._receipt_changed());
+  }
+
+  stop_detect_receipt() {
+    this.old_receipt = null;
+    this.receipt_updated = false;
+    this.timeout_count = 0;
+    this.subscription.unsubscribe();
+  }
+
+  async _receipt_changed() {
+    // console.log("receipt change called");
+    if (this.account_id === "") {
+      this.toastSvc.present_toast(
+        "wallet account_id is invalid. Please login and wait 3 seconds.", "top", "bg-danger"
+      );
+      this.stop_detect_receipt();
+      return;
+    }
+    let new_receipt = await this.walletSvc.view('latest_transaction', {
+      "account": this.account_id
+    });
+
+    // console.log(this.compare_receipt(this.old_receipt, new_receipt));
+    if (!this.compare_receipt(this.old_receipt, new_receipt)) {
+      this.receipt_updated = true;
+      this.stop_detect_receipt();
+    }
+
+    this.timeout_count += 1;
+    if (this.timeout_count > this.threshold_timeout) { this.reset_if_no_pay(); }
+  }
+
+  compare_receipt(_old: any, _new: any) {
+    return _old.from == _new.from
+      && _old.to == _new.to
+      && _old.total == _new.total
+      && _old.charges == _new.charges
+      && _old.final_total == _new.final_total;
+      // Will include time later. 
+  };
+
+  async set_old_receipt() {
+    if (this.account_id === "") {
+      this.toastSvc.present_toast(
+        "wallet account_id is invalid. Please login and wait 3 seconds.", "top", "bg-danger"
+      );
+      return;
+    }
+    this.old_receipt = await this.walletSvc.view('latest_transaction', {
+      "account": this.account_id
+    });
+  }
+
+  // reset if no pay within 5 minutes.
+  reset_if_no_pay() {
+    this.stop_detect_receipt();
   }
 }
