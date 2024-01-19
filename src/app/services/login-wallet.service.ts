@@ -4,8 +4,7 @@ import { AccountState, setupWalletSelector } from "@near-wallet-selector/core";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupLedger } from '@near-wallet-selector/ledger';
 import { setupHereWallet } from '@near-wallet-selector/here-wallet';
-import { setupNearFi } from "@near-wallet-selector/nearfi";
-import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet"; 
+import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
 import { ToastService } from './toast.service';
 import { Contract, providers } from 'near-api-js';
 
@@ -44,9 +43,18 @@ export class LoginWalletService {
       modules: [
         setupMyNearWallet(),
         setupLedger(),
-        setupHereWallet(),
-        setupNearFi(),
-        setupNearMobileWallet()
+        // setupHereWallet(),
+        setupWalletConnect({
+          // projectId: "b30ddd930c9ee8bc0b631258b0c8b515",
+          projectId: "e0c44f401fcc7df289902ee5418ffd97",
+          metadata: {
+            name: "Pay NEAR",
+            description: "Pay with NEAR",
+            url: "https://github.com/wabinab/pay-near",
+            icons: [],
+          },
+          chainId: "near:testnet",
+        }),
       ]
     });
 
