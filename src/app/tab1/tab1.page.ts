@@ -27,7 +27,7 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.myForm = this.fb.group({
-      qr_data: [, [Validators.required, Validators.min(this.min_val), 
+      price: [, [Validators.required, Validators.min(this.min_val), 
         Validators.max(this.max_val),
         Validators.pattern("^[0-9]+(.[0-9]{0,5})?$")]]
     });
@@ -61,11 +61,11 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   get qr_data() {
-    return `${this.account_id} ${this.myForm.get('qr_data')!.value.toString()}`;
+    return `${this.account_id} ${this.myForm.get('price')!.value.toString()}`;
   }
 
   get qr_error() {
-    var err = this.myForm.get('qr_data').errors ?? {};
+    var err = this.myForm.get('price').errors ?? {};
     if (err['pattern']) return "Max 5 decimal place, numbers only."
     if (err['min']) return `Minimum ${this.min_val} per transaction.`
     if (err['max']) return `Maximum ${this.max_val} per transaction.`;
@@ -73,12 +73,12 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   get errors() {
-    return this.myForm.get('qr_data').errors;
+    return this.myForm.get('price').errors;
   }
 
   lock_or_unlock() {
     if (this.errors) {
-      this.myForm.get('qr_data').markAsDirty();
+      this.myForm.get('price').markAsDirty();
       if (this.errors['required']) this.toastSvc.present_toast(`Please input price`, "top", "bg-danger");
       else this.toastSvc.present_toast(`Error: ${this.qr_error}`, "top", "bg-danger");
       return null;
@@ -101,7 +101,7 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   lock_price() {
     this.qr_finalized = true;
-    this.myForm.get('qr_data').disable();
+    this.myForm.get('price').disable();
 
     if (this.is_single) {
       this.receipt_updated = false;
@@ -114,7 +114,7 @@ export class Tab1Page implements OnInit, OnDestroy {
     // Vibrate 0.3s, Pause 0.5s, Vibrate 0.8s. 
     this.vibration.vibrate([300, 500, 800]);
     this.qr_finalized = false;
-    this.myForm.get('qr_data').enable();
+    this.myForm.get('price').enable();
     
     if (this.is_single) {
       this.stop_detect_receipt();
@@ -158,7 +158,7 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   async _receipt_changed() {
-    // console.log("receipt change called");
+    console.log("receipt change called");
     if (this.account_id === "") {
       this.toastSvc.present_toast(
         "wallet account_id is invalid. Please login and wait 3 seconds.", "top", "bg-danger"
@@ -180,13 +180,10 @@ export class Tab1Page implements OnInit, OnDestroy {
     if (this.timeout_count > this.threshold_timeout) { this.reset_if_no_pay(); }
   }
 
+  // Check receipt datetime same
   compare_receipt(_old: any, _new: any) {
-    return _old.from == _new.from
-      && _old.to == _new.to
-      && _old.total == _new.total
-      && _old.charges == _new.charges
-      && _old.final_total == _new.final_total;
-      // Will include time later. 
+    let receipt_same = _old.datetime == _new.datetime;
+    return receipt_same;
   };
 
   async set_old_receipt() {

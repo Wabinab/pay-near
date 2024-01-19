@@ -10,68 +10,69 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <div *ngIf="scannerEnabled">
-    <zxing-scanner 
-      [formats]="allowedFormats"
-      [enable]="scannerEnabled"
-      (scanSuccess)="scanSuccess($event)"
-      (scanError)="scanError($event)"
-    ></zxing-scanner>
-  </div>
+  <ng-container *ngIf="account_id.trim().length === 0">
+    <div class="container-center">
+      <p class="display-6">Please login to continue</p>
+    </div>
+  </ng-container>
 
-  <div class="pt-3" *ngIf="receipt">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title class="text-center">Receipt</ion-card-title>
-      </ion-card-header>
-
-      <ion-card-content>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="1"></ion-col>
-            <ion-col size="4" class="fs-16 text-center">{{ receipt.from }}</ion-col>
-            <ion-col size="2" class="fs-16 text-center"><ion-icon name="arrow-forward-outline"></ion-icon></ion-col>
-            <ion-col size="4" class="fs-16 text-center">{{ receipt.to }}</ion-col>
-            <ion-col size="1"></ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="1"></ion-col>
-            <ion-col size="4" class="fs-16 text-center">{{ receipt.total }}</ion-col>
-            <ion-col size="2" class="fs-16 text-center"><ion-icon name="arrow-forward-outline"></ion-icon></ion-col>
-            <ion-col size="4" class="fs-16 text-center">{{ receipt.final_total }}</ion-col>
-            <ion-col size="1"></ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="5"></ion-col>
-            <ion-col size="2" class="fs-16 text-center">{{ receipt.charges }}</ion-col>
-            <ion-col size="5"></ion-col>
-          </ion-row>
-          <hr>
-          <ion-row>
-            <ion-col size="2" class="fs-16 text-end">Paid:</ion-col>
-            <ion-col size="auto" class="fs-16">{{ receipt.paid }}</ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="2" class="fs-16 text-end">Refund:</ion-col>
-            <ion-col size="auto" class="fs-16">{{ receipt.refund ?? "0 N" }}</ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-card-content>
-    </ion-card>
-  </div>
-
-  <div [class]="buttons_class">
-    <ion-button *ngIf="!scannerEnabled && !receipt" size="large" (click)="enable_scanner()"><ion-icon name="camera-outline"></ion-icon></ion-button>
-    <ion-button *ngIf="scannerEnabled && !receipt" size="large" (click)="disable_scanner()" color="medium">
-      <ion-icon name="trash-outline"></ion-icon> <ion-icon name="camera-outline"></ion-icon>
-    </ion-button>
-    <ion-button *ngIf="receipt" size="large" (click)="clear_txhash()" color="medium">Dismiss</ion-button>
-  </div>
-   
-  <!-- <ion-buttons>
-    <ion-button (click)="get_wallet()">Get Wallet</ion-button>
-  </ion-buttons> -->
-
-  <!-- {{ data }} -->
-  <!-- {{ receipt | json }} -->
+  <ng-container *ngIf="account_id.trim().length !== 0">
+    <div *ngIf="scannerEnabled">
+      <zxing-scanner 
+        [formats]="allowedFormats"
+        [enable]="scannerEnabled"
+        (scanSuccess)="scanSuccess($event)"
+        (scanError)="scanError($event)"
+      ></zxing-scanner>
+    </div>
+  
+    <div class="pt-3" *ngIf="receipt">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title class="text-center">Receipt</ion-card-title>
+        </ion-card-header>
+  
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="1"></ion-col>
+              <ion-col size="4" class="fs-16 text-center">{{ receipt.from }}</ion-col>
+              <ion-col size="2" class="fs-16 text-center"><ion-icon name="arrow-forward-outline"></ion-icon></ion-col>
+              <ion-col size="4" class="fs-16 text-center">{{ receipt.to }}</ion-col>
+              <ion-col size="1"></ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="1"></ion-col>
+              <ion-col size="4" class="fs-16 text-center">{{ receipt.total }}</ion-col>
+              <ion-col size="2" class="fs-16 text-center"><ion-icon name="arrow-forward-outline"></ion-icon></ion-col>
+              <ion-col size="4" class="fs-16 text-center">{{ receipt.final_total }}</ion-col>
+              <ion-col size="1"></ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="5"></ion-col>
+              <ion-col size="2" class="fs-16 text-center">{{ receipt.charges }}</ion-col>
+              <ion-col size="5"></ion-col>
+            </ion-row>
+            <hr>
+            <ion-row>
+              <ion-col size="2" class="fs-16 text-end">Paid:</ion-col>
+              <ion-col size="auto" class="fs-16">{{ receipt.paid }}</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="2" class="fs-16 text-end">Refund:</ion-col>
+              <ion-col size="auto" class="fs-16">{{ receipt.refund ?? "0 N" }}</ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  
+    <div [class]="buttons_class">
+      <ion-button *ngIf="!scannerEnabled && !receipt" size="large" (click)="enable_scanner()"><ion-icon name="camera-outline"></ion-icon></ion-button>
+      <ion-button *ngIf="scannerEnabled && !receipt" size="large" (click)="disable_scanner()" color="medium">
+        <ion-icon name="trash-outline"></ion-icon> <ion-icon name="camera-outline"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="receipt" size="large" (click)="clear_txhash()" color="medium">Dismiss</ion-button>
+    </div>  
+  </ng-container>
 </ion-content>
