@@ -44,17 +44,17 @@ export class LoginWalletService {
         setupMyNearWallet(),
         setupLedger(),
         // setupHereWallet(),
-        setupWalletConnect({
-          // projectId: "b30ddd930c9ee8bc0b631258b0c8b515",
-          projectId: "e0c44f401fcc7df289902ee5418ffd97",
-          metadata: {
-            name: "Pay NEAR",
-            description: "Pay with NEAR",
-            url: "https://github.com/wabinab/pay-near",
-            icons: [],
-          },
-          chainId: "near:testnet",
-        }),
+        // setupWalletConnect({
+        //   // projectId: "b30ddd930c9ee8bc0b631258b0c8b515",
+        //   projectId: "e0c44f401fcc7df289902ee5418ffd97",
+        //   metadata: {
+        //     name: "Pay NEAR",
+        //     description: "Pay with NEAR",
+        //     url: "https://github.com/wabinab/pay-near",
+        //     icons: [],
+        //   },
+        //   chainId: "near:testnet",
+        // }),
       ]
     });
 
