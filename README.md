@@ -48,3 +48,28 @@ State migration can be found in this [near documentation](https://docs.near.org/
 
 ### Caveat with `LookupMap`
 Well, since we can't loop, it also means it's not migrate-able; unless you save it as an unorderedmap instead, which is loopable by keys. 
+
+### Compilation to Mobile (Android)
+As usual, ionic have this unfixed bug for years, where API Level 31 and higher requires you to change the targeted code for compilation to be successful. 
+
+Open up **NfcPlugin.java** and make changes to the function `createPendingIntent()` by deleting the original related code and replace with the code below:
+
+```java
+    private void createPendingIntent() {
+        if (pendingIntent == null) {
+            Activity activity = getActivity();
+            Intent intent = new Intent(activity, activity.getClass());
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+              intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+              pendingIntent = PendingIntent.getActivity(activity, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            } else {
+              intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+              pendingIntent = PendingIntent.getActivity(activity, 0, intent, 0);
+            }
+
+//            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            pendingIntent = PendingIntent.getActivity(activity, 0, intent, 0);
+        }
+    }
+```
