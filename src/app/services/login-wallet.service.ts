@@ -19,7 +19,7 @@ export class LoginWalletService {
   state: any;
   account_id: string | null = null;
   wallet: any;
-  contract_id: string = 'dev-1705568661801-39457767348679';
+  contract_id: string = 'dev-1705033899889-69514074347403';
   // contract: any | null = null;
 
   constructor(private toastSvc: ToastService) {
