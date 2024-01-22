@@ -41,7 +41,7 @@ pub struct Statistics {
 The `bins_months` are saved as `year month`, e.g. `2021 1` means January 2021. The `values_months` are same length as `bins_months`, and they mapped exactly by index. Similarly, for `values_years` and `bins_years`; and `bins_years` are saved as `year`, e.g. `2023`. 
 
 ## Methods
-We haven't define the contract name yet, so let's call it `pay.near` for now (which we won't use since it's already being used). We'll show both the rust signature and NEAR CLI signature if you decide to call it yourself. 
+Contract name is `pay_near.near`, while in testnet it's `pay_testnet.testnet`. We'll show both the rust signature and NEAR CLI signature if you decide to call it yourself. 
 
 #### transfer
 Transfer money from whoever call this function to the target. If you attached more money than the `amount` stated, the rest will be refunded, and it'll be displayed `Receipt`'s `refund`. 
@@ -49,7 +49,7 @@ Transfer money from whoever call this function to the target. If you attached mo
 fn transfer(&mut self, target: AccountId, amount: U128) -> Receipt;
 ```
 ```bash
-near call pay.near transfer '{"target": "target.near", "amount": "1000000000000000000000000"}' --accountId yourname.near --amount 1
+near call pay_near.near transfer '{"target": "target.near", "amount": "1000000000000000000000000"}' --accountId yourname.near --amount 1
 ```
 
 #### activate_statistics
@@ -58,7 +58,7 @@ To use statistics, you have to deposit some storage cost. It accepts 0.75N minim
 fn activate_statistics(&mut self);
 ```
 ```bash
-near call pay.near activate_statistics '{}' --accountId yourname.near --amount 0.75
+near call pay_near.near activate_statistics '{}' --accountId yourname.near --amount 0.75
 ```
 
 #### stats_activated
@@ -67,7 +67,7 @@ Check if a specific accountId have activate statistics or not.
 fn stats_activated(&self, account: AccountId) -> bool;
 ```
 ```bash
-near view pay.near stats_activated '{"account": "target.near"}'
+near view pay_near.near stats_activated '{"account": "target.near"}'
 ```
 
 #### get_earnings
@@ -76,7 +76,7 @@ Get how much money specific `account` received via `transfer` call. All earnings
 fn get_earnings(&self, account: AccountId) -> Option<&Statistics>;
 ```
 ```bash
-near view pay.near get_earnings '{"account": "target.near"}'
+near view pay_near.near get_earnings '{"account": "target.near"}'
 ```
 
 #### get_spendings
@@ -85,7 +85,7 @@ Get how much money specific `account` spend via `transfer` call. All spendings r
 fn get_spendings(&self, account: AccountId) -> Option<&Statistics>;
 ```
 ```bash
-near view pay.near get_spendings '{"account": "target.near"}'
+near view pay_near.near get_spendings '{"account": "target.near"}'
 ```
 
 ### Receipt
@@ -97,7 +97,7 @@ To use receipt, you have to deposit some storage cost. It accepts 0.1N minimum, 
 fn activate_receipt(&mut self);
 ```
 ```bash
-near call pay.near activate_receipt '{}' --accountId yourname.near --deposit 0.1
+near call pay_near.near activate_receipt '{}' --accountId yourname.near --deposit 0.1
 ```
 
 #### receipt_activated
@@ -106,7 +106,7 @@ Whether the person had `activate_receipt` or not.
 fn receipt_activated(&self, account: AccountId) -> bool;
 ```
 ```bash
-near view pay.near receipt_activated '{"account": "target.near"}'
+near view pay_near.near receipt_activated '{"account": "target.near"}'
 ```
 
 #### latest_transaction
@@ -115,7 +115,7 @@ near view pay.near receipt_activated '{"account": "target.near"}'
 fn latest_transaction(&self, account: AccountId) -> Option<&Receipt>;
 ```
 ```bash
-near view pay.near latest_transaction '{"account": "target.near"}'
+near view pay_near.near latest_transaction '{"account": "target.near"}'
 ```
 
 ### Timestamping
@@ -124,5 +124,23 @@ Sometimes, we want to verify the current timestamp on the contract. The return v
 pub fn get_timestamp(&self) -> HashMap<&str, String>
 ```
 ```bash
-near view pay.near get_timestamp '{}'
+near view pay_near.near get_timestamp '{}'
 ```
+
+---
+## Other Methods
+These methods aren't for public use. 
+
+### Get Balance
+Well, it's used for `cargo test`. Not intended for public use; but it's open. It just get the balance of the account. Return String. 
+```rust
+pub fn get_balance(&self) -> String
+```
+```bash
+near view pay_near.near get_balance '{}'
+```
+
+### Payout
+As the person whom wrote this contract, one wants to earn money, so of course, there will be a payout function. The payout function only one can call, and only one can withdraw, so ignore this. 
+
+Basically, it'll just leave 5N in the account for some flexibility, while withdrawing all other NEAR from the account to my main account. 

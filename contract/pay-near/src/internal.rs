@@ -1,7 +1,7 @@
 use crate::*;
 use near_token::NearToken;
 
-const MAX_FEE: NearToken = NearToken::from_millinear(100);  // 0.1 N
+const MAX_FEE: NearToken = NearToken::from_millinear(25);  // 0.025 N
 const MIN_FEE: NearToken = NearToken::from_yoctonear(10u128.pow(18));  // 0.00001 N.
 const MIN_TRANSFER: NearToken = NearToken::from_millinear(1);  // 0.001 N
 

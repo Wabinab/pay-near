@@ -13,9 +13,11 @@ use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{near_bindgen, env, AccountId, BorshStorageKey, PanicOnDefault, Balance, Promise};
 
 pub use crate::transfer::*;
+pub use crate::earnings::*;
 use crate::metadata::*;
 use crate::internal::*;
 
+mod earnings;
 mod transfer;
 mod metadata;
 mod internal;
@@ -66,6 +68,10 @@ impl Contract {
 
     pub fn get_timestamp(&self) -> HashMap<&str, String> {
       timestamp_millis_to_datetime(env::block_timestamp_ms())
+    }
+
+    pub fn get_balance(&self) -> String {
+      yoctonear_to_near(env::account_balance())
     }
 
     // NOTE: Private functions can only be called by env::current_account. 
@@ -165,7 +171,7 @@ mod tests {
       assert_eq!(spend_alice.values_months[sa_len-1], "0".to_owned());
       let earn_alice = contract.get_earnings(accounts(1)).unwrap();
       let ea_len = earn_alice.values_months.len();
-      assert_eq!(earn_alice.values_months[ea_len-1], "99.9".to_owned());
+      assert_eq!(earn_alice.values_months[ea_len-1], "99.975".to_owned());
       let spend_bob = contract.get_spendings(accounts(2)).unwrap();
       let sa_len = spend_bob.values_months.len();
       assert_eq!(spend_bob.values_months[sa_len-1], "100".to_owned());
@@ -181,7 +187,7 @@ mod tests {
       assert_eq!(spend_alice.values_months[sa_len-1], "0".to_owned());
       let earn_alice = contract.get_earnings(accounts(1)).unwrap();
       let ea_len = earn_alice.values_months.len();
-      assert_eq!(earn_alice.values_months[ea_len-1], "129.87".to_owned());
+      assert_eq!(earn_alice.values_months[ea_len-1], "129.95".to_owned());
       let spend_bob = contract.get_spendings(accounts(2)).unwrap();
       let sb_len = spend_bob.values_months.len();
       assert_eq!(spend_bob.values_months[sb_len-1], "130".to_owned());
@@ -206,11 +212,11 @@ mod tests {
       let earn_alice = contract.get_earnings(accounts(1)).unwrap();
       let ea_len = earn_alice.values_months.len();
       assert_eq!(ea_len, 2);  // since its 1970 Feb, so 1 month later. 
-      assert_eq!(earn_alice.values_months[0], "129.87".to_owned());
-      assert_eq!(earn_alice.values_months[ea_len-1], "59.94".to_owned());
+      assert_eq!(earn_alice.values_months[0], "129.95".to_owned());
+      assert_eq!(earn_alice.values_months[ea_len-1], "59.975".to_owned());
       let eay_len = earn_alice.values_years.len();
       assert_eq!(eay_len, 1);  // it's still 1970. 
-      assert_eq!(earn_alice.values_years[eay_len-1], "189.81".to_owned());
+      assert_eq!(earn_alice.values_years[eay_len-1], "189.925".to_owned());
       let spend_bob = contract.get_spendings(accounts(2)).unwrap();
       let sb_len = spend_bob.values_months.len();
       assert_eq!(sb_len, 2);
@@ -236,10 +242,10 @@ mod tests {
       let earn_alice = contract.get_earnings(accounts(1)).unwrap();
       let ea_len = earn_alice.values_months.len();
       assert_eq!(ea_len, 1);
-      assert_eq!(earn_alice.values_months[ea_len-1], "49.95".to_owned());
+      assert_eq!(earn_alice.values_months[ea_len-1], "49.975".to_owned());
       let eay_len = earn_alice.values_years.len();
       assert_eq!(eay_len, 7);  // 1970 to 1976 inclusive. 
-      let exp_vec: Vec<String> = vec![189.81, 0., 0., 0., 0., 0., 49.95].iter()
+      let exp_vec: Vec<String> = vec![189.925, 0., 0., 0., 0., 0., 49.975].iter()
         .map(|c| c.to_string()).collect();
       assert_eq!(earn_alice.values_years, exp_vec, "FAILED: earn_alice value years after not match.");
       let spend_bob = contract.get_spendings(accounts(2)).unwrap();
@@ -286,8 +292,8 @@ mod tests {
       assert_eq!(after_transfer.from, accounts(2));
       assert_eq!(after_transfer.to, accounts(1));
       assert_eq!(after_transfer.total, "100 N".to_owned());
-      assert_eq!(after_transfer.charges, "100 mN".to_owned());
-      assert_eq!(after_transfer.final_total, "99.9 N".to_owned());
+      assert_eq!(after_transfer.charges, "25 mN".to_owned());
+      assert_eq!(after_transfer.final_total, "99.975 N".to_owned());
       assert_eq!(after_transfer.paid, "120 N".to_owned());
       assert_eq!(after_transfer.refund, Some("20 N".to_owned()));
       // assert_eq!(before_transfer.clone(), after_transfer.clone());
@@ -300,5 +306,20 @@ mod tests {
       let mut context = get_context(accounts(1));
       testing_env!(context.build());
       contract.activate_receipt();
+    }
+
+    #[test]
+    fn test_payout() {
+      let mut contract = Contract::new();
+      let mut context = get_context("wabinab.testnet".parse().unwrap());
+      testing_env!(context.build());
+
+      let balance_before = contract.get_balance();
+      contract.payout();
+      let balance_after = contract.get_balance();
+      assert_ne!(balance_before, "5");
+      assert_ne!(balance_before, balance_after);
+
+      // println!("Get balance: {:?}", balance_after);
     }
 }

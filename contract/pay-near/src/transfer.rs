@@ -1,7 +1,7 @@
 use crate::*;
 
 pub trait Transfer {
-  // Transfer money: includes 0.1% (capped 0.1N) to this account. 
+  // Transfer money: includes 0.1% (capped 0.025N) to this account. 
   fn transfer(&mut self, target: AccountId, amount: U128) -> Receipt;
 
   // Get statistics of receiving. 
