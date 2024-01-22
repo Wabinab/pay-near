@@ -1,9 +1,9 @@
-<ion-header [translucent]="true">
+<!-- To push the banner down. -->
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>Earn</ion-title>
-    <ion-title slot="end">{{ account_id }}</ion-title>
   </ion-toolbar>
 </ion-header>
+
 
 <ion-content [fullscreen]="true">
   <ion-refresher slot="fixed" (ionRefresh)="handle_refresh($event)">

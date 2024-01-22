@@ -4,7 +4,7 @@ import { AccountState, setupWalletSelector } from "@near-wallet-selector/core";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupLedger } from '@near-wallet-selector/ledger';
 import { setupHereWallet } from '@near-wallet-selector/here-wallet';
-import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
+// import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
 import { ToastService } from './toast.service';
 import { Contract, providers } from 'near-api-js';
 
@@ -13,12 +13,15 @@ import { Contract, providers } from 'near-api-js';
 })
 export class LoginWalletService {
 
+  network: 'mainnet' | 'testnet' = 'testnet';
+
   selector: any = null;
   modalWallet: any;
   state: any;
   account_id: string | null = null;
   wallet: any;
-  contract_id: string = 'dev-1705568661801-39457767348679';
+  contract_id_mainnet: string = '';
+  contract_id_testnet: string = 'dev-1705568661801-39457767348679';
   // contract: any | null = null;
 
   constructor(private toastSvc: ToastService) {
@@ -37,13 +40,17 @@ export class LoginWalletService {
     // });
   }
 
+  get contract_id() {
+    return this.network == 'mainnet' ? this.contract_id_mainnet : this.contract_id_testnet;
+  }
+
   async setup() {
     this.selector = await setupWalletSelector({
-      network: "testnet",
+      network: this.network,
       modules: [
         setupMyNearWallet(),
         setupLedger(),
-        // setupHereWallet(),
+        setupHereWallet(),
         // setupWalletConnect({
         //   // projectId: "b30ddd930c9ee8bc0b631258b0c8b515",
         //   projectId: "e0c44f401fcc7df289902ee5418ffd97",
@@ -99,11 +106,16 @@ export class LoginWalletService {
       return;
     }
 
+    if (!this.selector.isSignedIn()) {
+      this.toastSvc.present_toast("Already logout. Please restart app.", "top", "bg-danger", 3000);
+    }
+    
     var wallet = await this.selector.wallet();
+    if (wallet == null) 
     wallet.signOut().catch((err: any) => {
       console.log("Failed to sign out");
       console.error(err);
-      this.toastSvc.present_toast(`Failed to signout: ${err}`, "top", 'bg-danger');
+      this.toastSvc.present_toast(`Failed to signout: ${err}`, "top", 'bg-danger', 5000);
       return;
     });
     
@@ -160,5 +172,18 @@ export class LoginWalletService {
 
     const transaction = await provider.txStatus(txhash, 'unnused');
     return providers.getTransactionLastResult(transaction);
+  }
+
+  // ==================================================================
+  async change_network() {
+    if (this.selector.isSignedIn()) {
+      this.double_click = true;
+      await this.logout();
+    }
+
+    if (this.network == 'mainnet') this.network = 'testnet';
+    else this.network = 'mainnet';
+
+    await this.setup();
   }
 }

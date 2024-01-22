@@ -35,4 +35,17 @@ export class TabsPage {
   get double_click() {
     return this.walletSvc.double_click;
   }
+
+  get account_id() {
+    return this.walletSvc.account_id ?? "";
+  }
+
+  // ===========================================================
+  get net_name() {
+    return this.walletSvc.network;
+  }
+
+  change_net() {
+    this.walletSvc.change_network();
+  }
 }
