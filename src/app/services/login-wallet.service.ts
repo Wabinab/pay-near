@@ -13,7 +13,7 @@ import { Contract, providers } from 'near-api-js';
 })
 export class LoginWalletService {
 
-  network: 'mainnet' | 'testnet' = 'testnet';
+  network: 'mainnet' | 'testnet' = 'mainnet';
 
   selector: any = null;
   modalWallet: any;
