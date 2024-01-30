@@ -71,3 +71,6 @@ Thumbs.db
 contract/pay-near/neardev
 contract/pay-near/target
 contract/pay-near/sandbox-rs/target
+
+# keystores
+keystores/
