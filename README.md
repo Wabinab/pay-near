@@ -1,9 +1,18 @@
 
-### Testnet
-- Account id: dev-1705033899889-69514074347403
+# Pay NEAR
+This mobile app is designed to make payments in NEAR protocol by scanning a qrcode. What features it has except making it easy? 
+- Any payments and earnings made with this app could be seen in statistics (basic) (requires to pay storage)
+- It charges maximum 0.025N for every payment, or 0.1% if less than 25N. 
+- Rather than just scan the code and type the value yourself (like most qrcode in wallet app), you'd have the receiver type the amount, the payer don't need to type the amount in. 
+- And some other stuffs not of significance. 
+- Supports MyNearWallet (web) and HERE wallet. Unfortunately, NEAR mobile wallet failed during testing, so one disabled it. HERE wallet requires an older version to work, as an update in january 2024 make signing smart contract to pop up with problems that one can't fix. Ultimately, only MyNearWallet works well. Other wallet like extension that aren't really mobile-based aren't supported. Though, if you found something new, do open an issue and one'll check whether to add it for support or not. 
 
 ---
-# Learnings
+# How To Use
+(TBD)
+
+---
+# Learnings (Private)
 
 ### Install Webpack 5 items. 
 - To solve for crypto-browserify etc, first you need to install the corresponding library, like this: `npm i crypto-browserify` (with/without legacy peer deps).
