@@ -74,3 +74,4 @@ contract/pay-near/sandbox-rs/target
 
 # keystores
 keystores/
+*.keystore

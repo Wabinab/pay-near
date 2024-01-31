@@ -8,6 +8,10 @@ This mobile app is designed to make payments in NEAR protocol by scanning a qrco
 - Supports MyNearWallet (web) and HERE wallet. Unfortunately, NEAR mobile wallet failed during testing, so one disabled it. HERE wallet requires an older version to work, as an update in january 2024 make signing smart contract to pop up with problems that one can't fix. Ultimately, only MyNearWallet works well. Other wallet like extension that aren't really mobile-based aren't supported. Though, if you found something new, do open an issue and one'll check whether to add it for support or not. 
 
 ---
+# How To Install
+(TBD)
+
+---
 # How To Use
 (TBD)
 
