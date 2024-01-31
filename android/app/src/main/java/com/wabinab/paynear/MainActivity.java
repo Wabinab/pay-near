@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.wabinab.paynear;
 
 import com.getcapacitor.BridgeActivity;
 

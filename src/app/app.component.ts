@@ -20,6 +20,7 @@ export class AppComponent {
       this.zone.run(() => {
         const domain = 'wabinab.github.io';
         const pathArray = event.url.split(domain);
+        console.log(pathArray);
         const appPath = pathArray.pop();
         if (appPath) { this.router.navigateByUrl(appPath); }
       });

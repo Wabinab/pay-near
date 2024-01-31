@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { setupModal } from '@near-wallet-selector/modal-ui';
-import { AccountState, setupWalletSelector } from "@near-wallet-selector/core";
+import { AccountState, Network, NetworkId, setupWalletSelector } from "@near-wallet-selector/core";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupLedger } from '@near-wallet-selector/ledger';
 import { setupHereWallet } from '@near-wallet-selector/here-wallet';
@@ -13,7 +13,7 @@ import { Contract, providers } from 'near-api-js';
 })
 export class LoginWalletService {
 
-  network: 'mainnet' | 'testnet' = 'mainnet';
+  network: Network | NetworkId = 'mainnet';
 
   selector: any = null;
   modalWallet: any;
@@ -51,19 +51,15 @@ export class LoginWalletService {
         setupMyNearWallet(),
         setupLedger(),
         setupHereWallet(),
-        // setupWalletConnect({
-        //   // projectId: "b30ddd930c9ee8bc0b631258b0c8b515",
-        //   projectId: "e0c44f401fcc7df289902ee5418ffd97",
-        //   metadata: {
-        //     name: "Pay NEAR",
-        //     description: "Pay with NEAR",
-        //     url: "https://github.com/wabinab/pay-near",
-        //     icons: [],
-        //   },
-        //   chainId: "near:testnet",
-        // }),
       ]
     });
+    if (this.network == 'mainnet') {
+      this.selector.options.network = {networkId: 'mainnet', nodeUrl: 'https://rpc.mainnet.near.org', helperUrl: 'https://helper.mainnet.near.org', explorerUrl: 'https://nearblocks.io', indexerUrl: 'https://api.kitwallet.app'};
+    } else {
+      this.selector.options.network = {networkId: 'testnet', nodeUrl: 'https://rpc.testnet.near.org', helperUrl: 'https://helper.testnet.near.org', explorerUrl: 'https://testnet.nearblocks.io', indexerUrl: 'https://testnet-api.kitwallet.app'};
+    }
+    console.log(this.selector);
+    console.log(this.contract_id)
 
     this.modalWallet = setupModal(this.selector, {
       contractId: this.contract_id
@@ -184,6 +180,11 @@ export class LoginWalletService {
     if (this.network == 'mainnet') this.network = 'testnet';
     else this.network = 'mainnet';
 
+    this.selector = null;
+    this.state = null;
+    this.account_id = null;
+    this.wallet = null;
+    this.modalWallet = null;
     await this.setup();
   }
 }
