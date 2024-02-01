@@ -88,3 +88,14 @@ Open up **NfcPlugin.java** and make changes to the function `createPendingIntent
         }
     }
 ```
+
+### Icons PWA
+Unfortunately, capacitor/assets have some problem making the pwa icons, therefore, you'd have to use some online tools to deal with it, then copy and paste the respective size, then rename the icon names to match the original names. That's it. 
+
+### Compiling
+From project base: 
+
+```bash
+ionic build --prod
+ng deploy --no-build --dir=www --base-href=/pay-near/
+```
