@@ -40,14 +40,22 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   async handle_refresh(event: any) {
-    await this.refresh_fn(); 
-
+    this.refresh_fn();
     event.target.complete();
   }
 
   async refresh_fn() {
-    this.receipt_activated = await this.walletSvc.view('receipt_activated', {
+    if (this.walletSvc.account_id == null) {
+      this.receipt_activated = false;
+      return;
+    }
+    this.walletSvc.view('receipt_activated', {
       "account": this.walletSvc.account_id
+    }).then((result) => {
+      this.receipt_activated = result;
+    }).catch(err => {
+      this.receipt_activated = false;
+      console.error(err);
     });
     // console.warn(this.receipt_activated);
   }

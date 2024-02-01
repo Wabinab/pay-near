@@ -46,20 +46,20 @@ export class LoginWalletService {
 
   async setup() {
     this.selector = await setupWalletSelector({
-      network: this.network,
+      network: 'mainnet',
       modules: [
         setupMyNearWallet(),
         setupLedger(),
-        setupHereWallet(),
+        // setupHereWallet(),  // this will be separate, which we'll solve soon. 
       ]
     });
-    if (this.network == 'mainnet') {
-      this.selector.options.network = {networkId: 'mainnet', nodeUrl: 'https://rpc.mainnet.near.org', helperUrl: 'https://helper.mainnet.near.org', explorerUrl: 'https://nearblocks.io', indexerUrl: 'https://api.kitwallet.app'};
-    } else {
-      this.selector.options.network = {networkId: 'testnet', nodeUrl: 'https://rpc.testnet.near.org', helperUrl: 'https://helper.testnet.near.org', explorerUrl: 'https://testnet.nearblocks.io', indexerUrl: 'https://testnet-api.kitwallet.app'};
-    }
-    console.log(this.selector);
-    console.log(this.contract_id)
+    // if (this.network == 'mainnet') {
+    //   this.selector.options.network = {networkId: 'mainnet', nodeUrl: 'https://rpc.mainnet.near.org', helperUrl: 'https://helper.mainnet.near.org', explorerUrl: 'https://nearblocks.io', indexerUrl: 'https://api.kitwallet.app'};
+    // } else {
+    //   this.selector.options.network = {networkId: 'testnet', nodeUrl: 'https://rpc.testnet.near.org', helperUrl: 'https://helper.testnet.near.org', explorerUrl: 'https://testnet.nearblocks.io', indexerUrl: 'https://testnet-api.kitwallet.app'};
+    // }
+    // console.log(this.selector);
+    // console.log(this.contract_id)
 
     this.modalWallet = setupModal(this.selector, {
       contractId: this.contract_id
@@ -114,6 +114,7 @@ export class LoginWalletService {
       this.toastSvc.present_toast(`Failed to signout: ${err}`, "top", 'bg-danger', 5000);
       return;
     });
+
     
     // Clear all (except selector and modalWallet)
     this.state = null;
@@ -121,8 +122,17 @@ export class LoginWalletService {
     this.wallet = null;
     // this.contract = null;
 
-    this.toastSvc.present_toast("Logged out", 'middle', 'bg-success');
+    // this.toastSvc.present_toast("Logged out", 'middle', 'bg-success');
     this.double_click = false;
+
+    // For github pages
+    if ((window as any).localStorage['near_app_wallet_auth_key'] != undefined) {
+      this.toastSvc.present_toast("Logged out. Reloading page in 3 seconds.", 'middle', 'bg-success', 3000);
+      (window as any).localStorage['near_app_wallet_auth_key'] = '{}';
+      setTimeout(() => (window as any).location.reload(), 3000);
+    } else {
+      this.toastSvc.present_toast("Logged out", 'middle', 'bg-success');
+    }
   }
 
   // =================================

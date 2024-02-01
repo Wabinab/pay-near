@@ -46,6 +46,7 @@ export class TabsPage {
   }
 
   change_net() {
-    this.walletSvc.change_network();
+    return;
+    // this.walletSvc.change_network();
   }
 }
