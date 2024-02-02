@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1706859832726,
+  "timestamp": 1706865596649,
   "index": "/pay-near/index.html",
   "assetGroups": [
     {
@@ -60,7 +60,7 @@
         "/pay-near/7666.499cd9c49d50f2a9.js",
         "/pay-near/8382.c9e568f728b14dad.js",
         "/pay-near/8484.c748b00726f30cc9.js",
-        "/pay-near/8574.ec6e6191dbe03a02.js",
+        "/pay-near/8574.5486e3a287bc2e7a.js",
         "/pay-near/8577.f6629fe3eb2f5ad1.js",
         "/pay-near/8594.65576a141c9d443e.js",
         "/pay-near/8633.ffcb890ff5db8fb7.js",
@@ -82,7 +82,7 @@
         "/pay-near/polyfills-core-js.93f56369317b7a8e.js",
         "/pay-near/polyfills-dom.516ff539260f3e0d.js",
         "/pay-near/polyfills.2b2540df6c6a9c36.js",
-        "/pay-near/runtime.b57e105645a40005.js",
+        "/pay-near/runtime.2d3aba665e6af5f3.js",
         "/pay-near/styles.39c653ff122325ba.css"
       ],
       "patterns": []
@@ -161,7 +161,7 @@
     "/pay-near/7666.499cd9c49d50f2a9.js": "c8ce19d65b7d2ac3ed7d6c056c92ce369e77bba7",
     "/pay-near/8382.c9e568f728b14dad.js": "e477d0e9fb6b74420b15f3df43ced4b3128ab42c",
     "/pay-near/8484.c748b00726f30cc9.js": "faf9dccb4638754e9865eeda1b849fd94b8673cf",
-    "/pay-near/8574.ec6e6191dbe03a02.js": "79a6449296a88a7ff09ffea8c240a8be78dba68f",
+    "/pay-near/8574.5486e3a287bc2e7a.js": "3f1cafbaa979eb86b987038822e0d61fd39aad6f",
     "/pay-near/8577.f6629fe3eb2f5ad1.js": "c9fcef01a370504faf4ce0f2ab5b1c32c8f483c1",
     "/pay-near/8594.65576a141c9d443e.js": "3959b5e018750dfd0fad795fd616b2dc2e41a93d",
     "/pay-near/8633.ffcb890ff5db8fb7.js": "c4ba7cf013256db7dab0a97a4a9f554af5cbe49d",
@@ -188,13 +188,13 @@
     "/pay-near/assets/icons/icon-96x96.png": "5ac249000cb1d57194e2c25ebc6b143376243847",
     "/pay-near/assets/shapes.svg": "5413e95adabcb2cb639970051f55e0ddb64ace53",
     "/pay-near/common.3f53e50d72c2136e.js": "2d67932233ae378a7cefeddac76c86da608da984",
-    "/pay-near/index.html": "1143af7869fe01a186f5bcf591f113beb34a4f7e",
+    "/pay-near/index.html": "676b753839dabd67cc946c4427d4817ad20e28f5",
     "/pay-near/main.1403141d67caa5ac.js": "1d185d0c841fd396a8a9464590dbc8a179d42929",
     "/pay-near/manifest.webmanifest": "98aee5b12a1f5891514fec828e226679f8c768bf",
     "/pay-near/polyfills-core-js.93f56369317b7a8e.js": "c8e9e4ae48fec22ae530c491f407d01f349509a9",
     "/pay-near/polyfills-dom.516ff539260f3e0d.js": "cea88d53dd7d9ae658909b54c7bf701b2c796086",
     "/pay-near/polyfills.2b2540df6c6a9c36.js": "ced6d1b4c0d201376015565e95b582fcb49ca420",
-    "/pay-near/runtime.b57e105645a40005.js": "63b97913e6f575914a11c6393d340391369d596f",
+    "/pay-near/runtime.2d3aba665e6af5f3.js": "9903dcfced43880cdc1fb17be90917bd2f73e3f0",
     "/pay-near/styles.39c653ff122325ba.css": "43b797b1718c9b0ed4a1eb275c6a904a2e67c582"
   },
   "navigationUrls": [
