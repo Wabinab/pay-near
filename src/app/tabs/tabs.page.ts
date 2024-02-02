@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { LoginWalletService } from '../services/login-wallet.service';
+import { LoginHereService } from '../services/login-here.service';
 
 @Component({
   selector: 'app-tabs',
@@ -8,7 +9,7 @@ import { LoginWalletService } from '../services/login-wallet.service';
 })
 export class TabsPage {
 
-  constructor(private walletSvc: LoginWalletService) {}
+  constructor(private walletSvc: LoginWalletService, private hereSvc: LoginHereService) {}
 
   show_wallet() {
     if (["", null, undefined].includes(this.walletSvc.account_id)) this.walletSvc.show_wallet();
@@ -49,4 +50,9 @@ export class TabsPage {
     return;
     // this.walletSvc.change_network();
   }
+
+  // ============================================================
+  // show_here_wallet() {
+  //   this.hereSvc.login();
+  // }
 }

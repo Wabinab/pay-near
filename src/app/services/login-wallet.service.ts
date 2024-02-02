@@ -13,7 +13,7 @@ import { Contract, providers } from 'near-api-js';
 })
 export class LoginWalletService {
 
-  network: Network | NetworkId = 'mainnet';
+  network: Network | NetworkId = 'testnet';
 
   selector: any = null;
   modalWallet: any;
@@ -46,11 +46,11 @@ export class LoginWalletService {
 
   async setup() {
     this.selector = await setupWalletSelector({
-      network: 'mainnet',
+      network: this.network,
       modules: [
         setupMyNearWallet(),
         setupLedger(),
-        // setupHereWallet(),  // this will be separate, which we'll solve soon. 
+        setupHereWallet(),  
       ]
     });
     // if (this.network == 'mainnet') {
@@ -107,7 +107,7 @@ export class LoginWalletService {
     }
     
     var wallet = await this.selector.wallet();
-    if (wallet == null) 
+    if (wallet == null) this.toastSvc.present_toast("Wallet is null. Please restart app.", "top", "bg-danger", 3000);
     wallet.signOut().catch((err: any) => {
       console.log("Failed to sign out");
       console.error(err);
@@ -137,6 +137,10 @@ export class LoginWalletService {
 
   // =================================
   async call(method: string, args = {}, deposit = "0") {
+    if (this.get_account_id() == null) {
+      this.toastSvc.present_toast("Please sign in.", "middle", "bg-danger", 3000);
+      return;
+    }
     const gas = '30000000000000';
     const outcome = await this.wallet.signAndSendTransaction({
       signerId: this.account_id,

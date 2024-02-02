@@ -33,6 +33,8 @@ export class Tab1Page implements OnInit, OnDestroy {
     });
     this.source = interval(this.single_interval);
     setTimeout(() => this.refresh_fn(), 1000);
+
+    setInterval(() => this.log_offset(), 1500);
   }
 
   ngOnDestroy(): void {
@@ -166,7 +168,7 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   async _receipt_changed() {
-    console.log("receipt change called");
+    // console.log("receipt change called");
     if (this.account_id === "") {
       this.toastSvc.present_toast(
         "wallet account_id is invalid. Please login and wait 3 seconds.", "top", "bg-danger"
@@ -209,5 +211,19 @@ export class Tab1Page implements OnInit, OnDestroy {
   // reset if no pay within 5 minutes.
   reset_if_no_pay() {
     this.stop_detect_receipt();
+  }
+
+  // =======================================
+  log_offset() {
+    // var top = document.getElementById('container-top')?.offsetTop;
+    // var center = document.getElementById('container-center')?.offsetTop;
+    // var bottom = document.getElementById('container-bottom')?.offsetTop;
+    // console.log(`Top: ${top}\nCenter: ${center}\nBottom: ${bottom}`);
+  }
+
+  get imageHeight() {
+    var center = document.getElementById('container-center')?.offsetTop ?? 0;
+    var bottom = document.getElementById('container-bottom')?.offsetTop ?? 300;
+    return Math.round(bottom * 0.9) - center;
   }
 }

@@ -89,6 +89,9 @@ Open up **NfcPlugin.java** and make changes to the function `createPendingIntent
     }
 ```
 
+### HERE Wallet not displaying
+That's because you didn't install `@here-wallet/core` package from npm. That's why the modal didn't appear. 
+
 ### Icons PWA
 Unfortunately, capacitor/assets have some problem making the pwa icons, therefore, you'd have to use some online tools to deal with it, then copy and paste the respective size, then rename the icon names to match the original names. That's it. 
 
