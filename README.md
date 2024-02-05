@@ -99,7 +99,7 @@ Unfortunately, capacitor/assets have some problem making the pwa icons, therefor
 From project base: 
 
 ```bash
-ionic build --prod -- --base-href /pay-near/
+ionic build --prod -- --base-href /pay-near/ &&
 ng deploy --no-build --dir=www --base-href=/pay-near/
 ```
 

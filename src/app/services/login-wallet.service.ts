@@ -4,7 +4,8 @@ import { AccountState, Network, NetworkId, setupWalletSelector } from "@near-wal
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupLedger } from '@near-wallet-selector/ledger';
 import { setupHereWallet } from '@near-wallet-selector/here-wallet';
-// import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
+import { setupMintbaseWallet } from "@near-wallet-selector/mintbase-wallet";
+import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
 import { ToastService } from './toast.service';
 import { Contract, providers } from 'near-api-js';
 
@@ -23,6 +24,7 @@ export class LoginWalletService {
   contract_id_mainnet: string = 'pay_near.near';
   contract_id_testnet: string = 'pay_testnet.testnet';
   // contract: any | null = null;
+  callback_url = "https://wabinab.github.io/pay-near"
 
   constructor(private toastSvc: ToastService) {
     setTimeout(() => this.setup(), 500);
@@ -45,12 +47,25 @@ export class LoginWalletService {
   }
 
   async setup() {
+    // const dAppMetadata: DAppMetadata = { name: '', logoUrl: '', url: this.callback_url };
+
     this.selector = await setupWalletSelector({
       network: this.network,
       modules: [
-        setupMyNearWallet(),
+        setupMyNearWallet({
+          successUrl: this.callback_url,
+          failureUrl: this.callback_url
+        }),
         setupLedger(),
         setupHereWallet(),  
+        setupMintbaseWallet({
+          callbackUrl: this.callback_url
+        }),
+        setupNearMobileWallet({ dAppMetadata: {
+          name: "Pay Near", 
+          logoUrl: "https://github.com/near/wallet-selector/blob/main/packages/near-mobile-wallet/assets/icon.png", 
+          url: this.callback_url
+        }}),
       ]
     });
     // if (this.network == 'mainnet') {
