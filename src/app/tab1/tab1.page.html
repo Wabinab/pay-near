@@ -25,29 +25,76 @@
   
     <div id="container-top"></div>
     <div class="container-center" id="container-center">
-      <ng-container *ngIf="!qr_finalized">
-        <form [formGroup]="myForm" novalidate autocomplete="off" (ngSubmit)="lock_or_unlock()">
-          <ion-input fill="outline" label="" formControlName="price" placeholder="0"
-              class="custom" errorText="{{ qr_error }}" type="number"></ion-input>
-        </form>
-      </ng-container>
-  
-      <ng-container *ngIf="qr_finalized">
-        <qrcode [qrdata]="qr_data" [elementType]="'img'" [width]="imageHeight"></qrcode>
-        <p class="text-center display-4" *ngIf="qr_finalized">{{ qr_data }} N</p>
-      </ng-container>
-  
-      <ion-button (click)="lock_or_unlock()" size="large" [color]="lock_color">
-        <!-- {{ lock_unlock_name }} -->
-        <ion-icon [name]="lock_unlock_name"></ion-icon>
-      </ion-button>
-      <ng-container *ngIf="!receipt_activated">
-        <ion-button (click)="activate_receipt()" size="large" color="secondary">
-          <ion-icon name="receipt-outline"></ion-icon>
+      <!-- when not displaying receipt -->
+      <ng-container *ngIf="!curr_receipt">
+        <ng-container *ngIf="!qr_finalized">
+          <form [formGroup]="myForm" novalidate autocomplete="off" (ngSubmit)="lock_or_unlock()">
+            <ion-input fill="outline" label="" formControlName="price" placeholder="0"
+                class="custom" errorText="{{ qr_error }}" type="number"></ion-input>
+          </form>
+        </ng-container>
+    
+        <ng-container *ngIf="qr_finalized">
+          <qrcode [qrdata]="qr_data" [elementType]="'img'" [width]="imageHeight"></qrcode>
+          <p class="text-center display-4" *ngIf="qr_finalized">{{ qr_data }} N</p>
+        </ng-container>
+    
+        <ion-button (click)="lock_or_unlock()" size="large" [color]="lock_color">
+          <!-- {{ lock_unlock_name }} -->
+          <ion-icon [name]="lock_unlock_name"></ion-icon>
         </ion-button>
-        <br>
-        <span>(right button) To display receipt when someone paid.</span>
+        <ng-container *ngIf="!receipt_activated">
+          <ion-button (click)="activate_receipt()" size="large" color="secondary">
+            <ion-icon name="receipt-outline"></ion-icon>
+          </ion-button>
+          <br>
+          <span>(right button) To display receipt when someone paid.</span>
+        </ng-container>
       </ng-container>
+
+      <!-- When displaying receipt -->
+      <div class="pt-3" *ngIf="curr_receipt">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title class="text-center">Receipt</ion-card-title>
+          </ion-card-header>
+    
+          <ion-card-content>
+            <ion-grid>
+              <ion-row>
+                <!-- <ion-col size="1"></ion-col> -->
+                <ion-col size="5" class="fs-16 text-center">{{ curr_receipt.from }}</ion-col>
+                <ion-col size="2" class="fs-16 text-center"><ion-icon name="arrow-forward-outline"></ion-icon></ion-col>
+                <ion-col size="5" class="fs-16 text-center">{{ curr_receipt.to }}</ion-col>
+                <!-- <ion-col size="1"></ion-col> -->
+              </ion-row>
+              <ion-row>
+                <!-- <ion-col size="1"></ion-col> -->
+                <ion-col size="5" class="fs-16 text-center">{{ curr_receipt.total }}</ion-col>
+                <ion-col size="2" class="fs-16 text-center"><ion-icon name="arrow-forward-outline"></ion-icon></ion-col>
+                <ion-col size="5" class="fs-16 text-center">{{ curr_receipt.final_total }}</ion-col>
+                <!-- <ion-col size="1"></ion-col> -->
+              </ion-row>
+              <ion-row>
+                <ion-col size="5"></ion-col>
+                <ion-col size="2" class="fs-16 text-center">{{ curr_receipt.charges }}</ion-col>
+                <ion-col size="5"></ion-col>
+              </ion-row>
+              <hr>
+              <ion-row>
+                <ion-col size="3" class="fs-16 text-end">Paid:</ion-col>
+                <ion-col size="auto" class="fs-16">{{ curr_receipt.paid }}</ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="3" class="fs-16 text-end">Refund:</ion-col>
+                <ion-col size="auto" class="fs-16">{{ curr_receipt.refund ?? "0 N" }}</ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <ion-button *ngIf="curr_receipt" size="large" (click)="clear_txhash()" color="medium">Dismiss</ion-button>
+      <!-- <ion-button size="large" (click)="debug_set_old()">Set Old</ion-button> -->
     </div>
   
     <div class="container-bottom" id="container-bottom">

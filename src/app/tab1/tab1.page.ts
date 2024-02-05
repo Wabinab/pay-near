@@ -34,7 +34,7 @@ export class Tab1Page implements OnInit, OnDestroy {
     this.source = interval(this.single_interval);
     setTimeout(() => this.refresh_fn(), 1000);
 
-    setInterval(() => this.log_offset(), 1500);
+    // setInterval(() => this.log_offset(), 1500);
   }
 
   ngOnDestroy(): void {
@@ -143,6 +143,7 @@ export class Tab1Page implements OnInit, OnDestroy {
   is_single: boolean = true;  
   old_receipt: any;
   receipt_updated: boolean = false;
+  curr_receipt: any;
   timeout_count = 0;
   threshold_timeout = Math.round(300_000 / 1_500);
 
@@ -167,6 +168,11 @@ export class Tab1Page implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  clear_txhash() {
+    this.unlock_price();
+    this.curr_receipt = null;
+  }
+
   async _receipt_changed() {
     // console.log("receipt change called");
     if (this.account_id === "") {
@@ -180,8 +186,10 @@ export class Tab1Page implements OnInit, OnDestroy {
       "account": this.account_id
     });
 
-    // console.log(this.compare_receipt(this.old_receipt, new_receipt));
+    // console.log("Receipt before change: ", this.compare_receipt(this.old_receipt, new_receipt));
     if (!this.compare_receipt(this.old_receipt, new_receipt)) {
+      // console.log("Receipt change: ", this.compare_receipt(this.old_receipt, new_receipt));
+      this.curr_receipt = new_receipt;
       this.receipt_updated = true;
       this.stop_detect_receipt();
     }
@@ -214,16 +222,20 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   // =======================================
-  log_offset() {
-    // var top = document.getElementById('container-top')?.offsetTop;
-    // var center = document.getElementById('container-center')?.offsetTop;
-    // var bottom = document.getElementById('container-bottom')?.offsetTop;
-    // console.log(`Top: ${top}\nCenter: ${center}\nBottom: ${bottom}`);
-  }
+  // log_offset() {
+  //   // var top = document.getElementById('container-top')?.offsetTop;
+  //   // var center = document.getElementById('container-center')?.offsetTop;
+  //   // var bottom = document.getElementById('container-bottom')?.offsetTop;
+  //   // console.log(`Top: ${top}\nCenter: ${center}\nBottom: ${bottom}`);
+  // }
 
   get imageHeight() {
     var center = document.getElementById('container-center')?.offsetTop ?? 0;
     var bottom = document.getElementById('container-bottom')?.offsetTop ?? 300;
     return Math.round(bottom * 0.9) - center;
   }
+
+  // debug_set_old() {
+  //   this.curr_receipt = this.old_receipt;
+  // }
 }

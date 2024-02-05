@@ -14,7 +14,7 @@ import { Contract, providers } from 'near-api-js';
 })
 export class LoginWalletService {
 
-  network: Network | NetworkId = 'mainnet';
+  network: Network | NetworkId = 'testnet';
 
   selector: any = null;
   modalWallet: any;
@@ -59,16 +59,16 @@ export class LoginWalletService {
         setupMyNearWallet(),
         setupLedger(),
         setupHereWallet(),  
-        setupMintbaseWallet(),
-        setupNearMobileWallet(),
+        // setupMintbaseWallet(),
+        // setupNearMobileWallet(),
         // setupMintbaseWallet({
         //   callbackUrl: this.callback_url
         // }),
-        // setupNearMobileWallet({ dAppMetadata: {
-        //   name: "Pay Near", 
-        //   logoUrl: "https://github.com/near/wallet-selector/blob/main/packages/near-mobile-wallet/assets/icon.png", 
-        //   url: this.callback_url
-        // }}),
+        setupNearMobileWallet({ dAppMetadata: {
+          name: "Pay Near", 
+          logoUrl: "https://github.com/near/wallet-selector/blob/main/packages/near-mobile-wallet/assets/icon.png", 
+          url: this.callback_url
+        }}),
       ]
     });
     // if (this.network == 'mainnet') {
@@ -83,6 +83,10 @@ export class LoginWalletService {
       contractId: this.contract_id
     });
 
+    if ((window as any).localStorage['near_app_wallet_auth_key'] == undefined) {
+      (window as any).localStorage['near_app_wallet_auth_key'] = '{}';
+    }
+
     if (this.selector.isSignedIn()) {
       this.state = this.selector.store.getState();
       this.get_account_id();
@@ -95,6 +99,9 @@ export class LoginWalletService {
 
   show_wallet() {
     if (this.modalWallet == undefined) this.setup();
+    if ((window as any).localStorage['near_app_wallet_auth_key'] == undefined) {
+      (window as any).localStorage['near_app_wallet_auth_key'] = '{}';
+    }
     // console.log(this.modalWallet);
     // console.warn(this.selector);
     this.modalWallet.show();
