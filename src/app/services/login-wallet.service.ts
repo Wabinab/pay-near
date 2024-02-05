@@ -14,7 +14,7 @@ import { Contract, providers } from 'near-api-js';
 })
 export class LoginWalletService {
 
-  network: Network | NetworkId = 'testnet';
+  network: Network | NetworkId = 'mainnet';
 
   selector: any = null;
   modalWallet: any;
@@ -52,20 +52,23 @@ export class LoginWalletService {
     this.selector = await setupWalletSelector({
       network: this.network,
       modules: [
-        setupMyNearWallet({
-          successUrl: this.callback_url,
-          failureUrl: this.callback_url
-        }),
+        // setupMyNearWallet({
+        //   successUrl: this.callback_url,
+        //   failureUrl: this.callback_url
+        // }),
+        setupMyNearWallet(),
         setupLedger(),
         setupHereWallet(),  
-        setupMintbaseWallet({
-          callbackUrl: this.callback_url
-        }),
-        setupNearMobileWallet({ dAppMetadata: {
-          name: "Pay Near", 
-          logoUrl: "https://github.com/near/wallet-selector/blob/main/packages/near-mobile-wallet/assets/icon.png", 
-          url: this.callback_url
-        }}),
+        setupMintbaseWallet(),
+        setupNearMobileWallet(),
+        // setupMintbaseWallet({
+        //   callbackUrl: this.callback_url
+        // }),
+        // setupNearMobileWallet({ dAppMetadata: {
+        //   name: "Pay Near", 
+        //   logoUrl: "https://github.com/near/wallet-selector/blob/main/packages/near-mobile-wallet/assets/icon.png", 
+        //   url: this.callback_url
+        // }}),
       ]
     });
     // if (this.network == 'mainnet') {
