@@ -53,3 +53,7 @@ import 'zone.js';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+import * as buffer from 'buffer';
+(window as any).Buffer = buffer.Buffer;
+(window as any).process = { env: { DEBUG: undefined }, };
+(window as any).global ||= (window as any);

@@ -26,6 +26,7 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 @import 'node_modules/bootstrap/scss/bootstrap';
+@import "~@near-wallet-selector/modal-ui/styles.css";
 
 ion-toast.custom-bg-success {
   --background: rgba(25, 135, 84, 0.85) !important;
@@ -43,4 +44,44 @@ ion-toast.custom-bg-danger {
 ion-toast.custom-bg-info {
   --background: rgba(150, 223, 237, 0.963) !important;
   --color: black;
+}
+
+// =======================================================
+// Hide all elements
+body.barcode-scanning-active {
+  visibility: hidden;
+  --background: transparent;
+  --ion-background-color: transparent;
+}
+
+// Show only the barcode scanner modal
+.barcode-scanning-modal {
+  visibility: visible;
+}
+
+@media (prefers-color-scheme: dark) {
+  .barcode-scanning-modal {
+    --background: transparent;
+    --ion-background-color: transparent;
+  }
+}
+// =======================================================
+.container-center {
+  text-align: center;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.container-bottom {
+  text-align: center;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 5%;
+  transform: translateY(-50%);
 }

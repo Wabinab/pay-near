@@ -1,17 +1,67 @@
-<ion-header [translucent]="true">
+<!-- To push the banner down. -->
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="handle_refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ng-container *ngIf="account_id.trim().length === 0">
+    <div class="container-center">
+      <p class="display-6">Please login to continue</p>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="account_id.trim().length !== 0">
+    <div class="bg-danger">
+      <h3 class="text-center text-light">
+        Warning! Check payment destination: "{{ contract_id }}"
+      </h3>
+    </div>
+  
+    <div id="container-top"></div>
+    <div class="container-center" id="container-center">
+      <ng-container *ngIf="!qr_finalized">
+        <form [formGroup]="myForm" novalidate autocomplete="off" (ngSubmit)="lock_or_unlock()">
+          <ion-input fill="outline" label="" formControlName="price" placeholder="0"
+              class="custom" errorText="{{ qr_error }}" type="number"></ion-input>
+        </form>
+      </ng-container>
+  
+      <ng-container *ngIf="qr_finalized">
+        <qrcode [qrdata]="qr_data" [elementType]="'img'" [width]="imageHeight"></qrcode>
+        <p class="text-center display-4" *ngIf="qr_finalized">{{ qr_data }} N</p>
+      </ng-container>
+  
+      <ion-button (click)="lock_or_unlock()" size="large" [color]="lock_color">
+        <!-- {{ lock_unlock_name }} -->
+        <ion-icon [name]="lock_unlock_name"></ion-icon>
+      </ion-button>
+      <ng-container *ngIf="!receipt_activated">
+        <ion-button (click)="activate_receipt()" size="large" color="secondary">
+          <ion-icon name="receipt-outline"></ion-icon>
+        </ion-button>
+        <br>
+        <span>(right button) To display receipt when someone paid.</span>
+      </ng-container>
+    </div>
+  
+    <div class="container-bottom" id="container-bottom">
+      <ng-container *ngIf="receipt_activated">
+        <!-- Don't display, but we also disable it in case people force it to display. -->
+        <ion-toggle [checked]="is_single" (ionChange)="on_single_change()" 
+        *ngIf="!qr_finalized" [disabled]="qr_finalized">
+          {{ is_single_name }}
+        </ion-toggle>
+        <!-- Display this when finalized instead. -->
+        <span *ngIf="qr_finalized">{{ is_single_name }}</span>
+        <!-- Add some paddings to move it up.  -->
+        <div class="pt-3"></div>
+      </ng-container>
+    </div>
+  </ng-container>
 </ion-content>
