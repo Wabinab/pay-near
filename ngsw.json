@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1707116083624,
+  "timestamp": 1707116240734,
   "index": "/pay-near/index.html",
   "assetGroups": [
     {
@@ -12,7 +12,7 @@
       },
       "urls": [
         "/pay-near/1120.4c8b1ad7e65fdd3c.js",
-        "/pay-near/1212.0816e8d35950bcf4.js",
+        "/pay-near/1212.221f338429731d5d.js",
         "/pay-near/1315.f632788bc0e04cb7.js",
         "/pay-near/1372.11060677de90b9a5.js",
         "/pay-near/1745.00ec0b5d5c3ea1df.js",
@@ -82,7 +82,7 @@
         "/pay-near/polyfills-core-js.93f56369317b7a8e.js",
         "/pay-near/polyfills-dom.516ff539260f3e0d.js",
         "/pay-near/polyfills.2b2540df6c6a9c36.js",
-        "/pay-near/runtime.4e89fdbfbc6ef5c7.js",
+        "/pay-near/runtime.a5787b967cd83d08.js",
         "/pay-near/styles.39c653ff122325ba.css"
       ],
       "patterns": []
@@ -113,7 +113,7 @@
   "dataGroups": [],
   "hashTable": {
     "/pay-near/1120.4c8b1ad7e65fdd3c.js": "6788157fd998355d0ccb885d42a9253e3fb845ba",
-    "/pay-near/1212.0816e8d35950bcf4.js": "7c8e7ccfa6b4f4521ed68d7916f7610b0c26ddc4",
+    "/pay-near/1212.221f338429731d5d.js": "c7fb61e8095e3020f161575220a17136dc871b79",
     "/pay-near/1315.f632788bc0e04cb7.js": "07788008e284c4b21476dc299b881b8d70a5996a",
     "/pay-near/1372.11060677de90b9a5.js": "e546a0bf7c8d83c85fde0d3a61e261e164d97003",
     "/pay-near/1745.00ec0b5d5c3ea1df.js": "1dbb2ce92d5192fb6acf4e816eab300cfe5f553c",
@@ -188,13 +188,13 @@
     "/pay-near/assets/icons/icon-96x96.png": "5ac249000cb1d57194e2c25ebc6b143376243847",
     "/pay-near/assets/shapes.svg": "5413e95adabcb2cb639970051f55e0ddb64ace53",
     "/pay-near/common.3f53e50d72c2136e.js": "2d67932233ae378a7cefeddac76c86da608da984",
-    "/pay-near/index.html": "6fe59e572f3a338d5e63f46ecb43ddaa498cfc9b",
+    "/pay-near/index.html": "7beb48917fa4ce687394b593a5eb8e6b54619ece",
     "/pay-near/main.1403141d67caa5ac.js": "1d185d0c841fd396a8a9464590dbc8a179d42929",
     "/pay-near/manifest.webmanifest": "98aee5b12a1f5891514fec828e226679f8c768bf",
     "/pay-near/polyfills-core-js.93f56369317b7a8e.js": "c8e9e4ae48fec22ae530c491f407d01f349509a9",
     "/pay-near/polyfills-dom.516ff539260f3e0d.js": "cea88d53dd7d9ae658909b54c7bf701b2c796086",
     "/pay-near/polyfills.2b2540df6c6a9c36.js": "ced6d1b4c0d201376015565e95b582fcb49ca420",
-    "/pay-near/runtime.4e89fdbfbc6ef5c7.js": "7b458fce205c08a628c68198161af2d5c46f2d24",
+    "/pay-near/runtime.a5787b967cd83d08.js": "ee3bbef47e234c795fa14124acb72ff860412c54",
     "/pay-near/styles.39c653ff122325ba.css": "43b797b1718c9b0ed4a1eb275c6a904a2e67c582"
   },
   "navigationUrls": [
