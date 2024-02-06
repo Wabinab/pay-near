@@ -6,6 +6,9 @@ import { ToastService } from '../services/toast.service';
 import { utils } from 'near-api-js';
 import { Subscription, interval } from 'rxjs';
 import { MiscService } from '../services/misc.service';
+import { IonModal, ModalController } from '@ionic/angular';
+import { QrcodeModalComponent } from './qrcode-modal/qrcode-modal.component';
+import { Brightness } from '@ionic-native/brightness/ngx';
 
 
 @Component({
@@ -25,7 +28,8 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder, private walletSvc: LoginWalletService,
     private vibration: Vibration, private toastSvc: ToastService, 
-    private miscSvc: MiscService) {}
+    private miscSvc: MiscService, private modalCtrl: ModalController,
+    private brightness: Brightness) {}
 
   ngOnInit() {
     this.myForm = this.fb.group({
@@ -74,6 +78,10 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   get qr_data() {
     return `${this.account_id} ${this.myForm.get('price')!.value.toString()}`;
+  }
+
+  get qr_data_simplified() {
+    return `${this.miscSvc.alter_name(this.account_id)} ${this.myForm.get('price')!.value.toString()}`;
   }
 
   get qr_error() {
@@ -253,4 +261,41 @@ export class Tab1Page implements OnInit, OnDestroy {
   //   this.receipt_updated = true;
   //   this.stop_detect_receipt();
   // }
+
+  // =======================================
+  // Zoom in QR Code Modal
+
+  async openModal() {
+    const modal = await this.modalCtrl.create({
+      component: QrcodeModalComponent,
+      componentProps: {
+        qr_data: this.qr_data
+      },
+    });
+    modal.present();
+    const curr_brightness = await this.brightness.getBrightness();
+    this.brightness.setBrightness(1);
+
+    modal.onDidDismiss().then(() => {
+      if (curr_brightness >= 0 && curr_brightness <= 1) this.brightness.setBrightness(curr_brightness);
+      else this.toastSvc.present_toast(`Get original brightness failed: ${curr_brightness}`, "top", "bg-danger", 5000);
+    }, (err) => {
+      this.toastSvc.present_toast(`Please report error: "qrcode modal dismiss: ${err}"`, "top", "bg-danger", 5000);
+    })
+  }
+
+  curr_bright: number;
+  max_brightness() {
+    this.brightness.getBrightness().then(res => {
+      this.curr_bright = res;
+      this.brightness.setBrightness(1);
+    });
+  }
+
+  reset_brightness() {
+    if (this.curr_bright >= 0 && this.curr_bright <= 1) this.brightness.setBrightness(this.curr_bright);
+  }
+
+  
 }
+

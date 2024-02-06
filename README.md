@@ -51,7 +51,7 @@ The **unlock** button will get you back to the previous page. Note: **clicking t
 
 See the "(right button) To display receipt when someone paid." text, and the button that looks like the receipt right of the lock/unlock? Usually, only the person who's performing the transaction (i.e. the payee) will receive some return value after he made the transaction, and you won't know about it. This is the button to make you know about it. 
 
-**It charges 0.1N as storage fee to activate such button.**
+**Activate receipt fee: 0.1 N**
 
 (Note: if you're logged out for whatever reasons, just login again.)
 
@@ -76,6 +76,11 @@ Minimum value per transaction is 0.001 N, maximum value is 50,000,000 N.
 As for the **warning! check payment destination** you should only have two: `pay_testnet.testnet`, and `pay_near.near`. Beware of phishings! Usually, you can check for more information just before you approve the transaction, look around for extra links that dropdown into extra information, or wallet app tends to show it in its information as well, where you can verify. 
 
 ### Pay / Send Money
+To scan the QR code, just click on the camera and give permission for camera access. It'll detect for main camera, which on your phone, it's most likely the back camera. Bring in your QR code from Earn, and meddle around until it scans. 
+
+The gray button below is to **deactivate camera**, if you don't want to scan anymore. 
+
+Upon scanning success, it'll redirect you the transaction page. Check that it's calling `transfer` from more information, and it's getting to the correct address `pay-near.near` or `pay-testnet.testnet`, and check the amount is correct, then proceed. Upon finish, you'll be redirected back, and display a receipt. 
 
 
 ### Logout/Sign Out

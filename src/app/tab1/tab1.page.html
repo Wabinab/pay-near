@@ -35,8 +35,10 @@
         </ng-container>
     
         <ng-container *ngIf="qr_finalized">
-          <qrcode [qrdata]="qr_data" [elementType]="'img'" [width]="imageHeight"></qrcode>
-          <p class="text-center display-4" *ngIf="qr_finalized">{{ qr_data }} N</p>
+          <ion-button fill="clear" class="custom" (click)="openModal()" >
+            <qrcode [qrdata]="qr_data" [elementType]="'img'" [width]="imageHeight"></qrcode>
+          </ion-button>
+          <p class="text-center display-4" *ngIf="qr_finalized">{{ qr_data_simplified }} N</p>
         </ng-container>
     
         <ion-button (click)="lock_or_unlock()" size="large" [color]="lock_color">
@@ -102,6 +104,9 @@
 
         <ion-button size="large" (click)="reset_timeout()" color="medium">Dismiss</ion-button>
       </div>
+
+      <ion-button size="large" (click)="max_brightness()">Max</ion-button>
+      <ion-button size="large" (click)="reset_brightness()" color="medium">Reset</ion-button>
     </div>
   
     <div class="container-bottom" id="container-bottom">
@@ -117,5 +122,6 @@
         <div class="pt-3"></div>
       </ng-container>
     </div>
+    
   </ng-container>
 </ion-content>
