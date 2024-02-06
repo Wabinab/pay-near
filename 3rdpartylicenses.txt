@@ -97,6 +97,9 @@ SOFTWARE.
 @here-wallet/core
 ISC
 
+@ionic-native/brightness
+MIT
+
 @ionic-native/core
 MIT
 
