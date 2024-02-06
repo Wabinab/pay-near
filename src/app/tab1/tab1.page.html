@@ -26,7 +26,7 @@
     <div id="container-top"></div>
     <div class="container-center" id="container-center">
       <!-- when not displaying receipt -->
-      <ng-container *ngIf="!curr_receipt">
+      <ng-container *ngIf="!curr_receipt && !timeout_page">
         <ng-container *ngIf="!qr_finalized">
           <form [formGroup]="myForm" novalidate autocomplete="off" (ngSubmit)="lock_or_unlock()">
             <ion-input fill="outline" label="" formControlName="price" placeholder="0"
@@ -76,9 +76,9 @@
                 <!-- <ion-col size="1"></ion-col> -->
               </ion-row>
               <ion-row>
-                <ion-col size="5"></ion-col>
-                <ion-col size="2" class="fs-16 text-center">{{ curr_receipt.charges }}</ion-col>
-                <ion-col size="5"></ion-col>
+                <ion-col size="4"></ion-col>
+                <ion-col size="4" class="fs-16 text-center">{{ curr_receipt.charges }}</ion-col>
+                <ion-col size="4"></ion-col>
               </ion-row>
               <hr>
               <ion-row>
@@ -95,6 +95,13 @@
       </div>
       <ion-button *ngIf="curr_receipt" size="large" (click)="clear_txhash()" color="medium">Dismiss</ion-button>
       <!-- <ion-button size="large" (click)="debug_set_old()">Set Old</ion-button> -->
+
+      <div class="pt-3" *ngIf="timeout_page">
+        <ion-icon name="hourglass-outline" class="timeout-icon" aria-hidden="true"></ion-icon>
+        <p class="display-3">Timeout</p>
+
+        <ion-button size="large" (click)="reset_timeout()" color="medium">Dismiss</ion-button>
+      </div>
     </div>
   
     <div class="container-bottom" id="container-bottom">

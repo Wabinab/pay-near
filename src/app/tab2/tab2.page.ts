@@ -4,6 +4,7 @@ import { LoginWalletService } from '../services/login-wallet.service';
 import { utils } from 'near-api-js';
 import { ToastService } from '../services/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MiscService } from '../services/misc.service';
 
 @Component({
   selector: 'app-tab2',
@@ -14,7 +15,7 @@ export class Tab2Page implements OnInit {
 
   data: any;
   constructor(private walletSvc: LoginWalletService, private toastSvc: ToastService,
-    private route: ActivatedRoute, private router: Router) {}
+    private route: ActivatedRoute, private router: Router, private miscSvc: MiscService) {}
 
   allowedFormats = [BarcodeFormat.QR_CODE]
   scannerEnabled = false;
@@ -65,15 +66,16 @@ export class Tab2Page implements OnInit {
       target: splitted_value[0],
       amount: yocto_amt
     }, yocto_amt ?? "0");
-    console.warn(this.receipt);
+    this.miscSvc.mod_receipt(this.receipt);
+    // console.warn(this.receipt);
   }
 
   private async load_txhash() {
     const txhash = this.route.snapshot.queryParamMap.get('transactionHashes');
-    console.log(txhash);
+    // console.log(txhash);
     if (txhash) {
       this.receipt = await this.walletSvc.getTxRes(txhash);
-      console.warn(this.receipt);
+      // console.warn(this.receipt);
     }
   }
 

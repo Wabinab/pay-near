@@ -5,6 +5,7 @@ import { Vibration } from '@ionic-native/vibration/ngx';
 import { ToastService } from '../services/toast.service';
 import { utils } from 'near-api-js';
 import { Subscription, interval } from 'rxjs';
+import { MiscService } from '../services/misc.service';
 
 
 @Component({
@@ -23,7 +24,8 @@ export class Tab1Page implements OnInit, OnDestroy {
   receipt_activated: boolean = true;  // button not display initially. 
 
   constructor(private fb: FormBuilder, private walletSvc: LoginWalletService,
-    private vibration: Vibration, private toastSvc: ToastService) {}
+    private vibration: Vibration, private toastSvc: ToastService, 
+    private miscSvc: MiscService) {}
 
   ngOnInit() {
     this.myForm = this.fb.group({
@@ -146,6 +148,8 @@ export class Tab1Page implements OnInit, OnDestroy {
   curr_receipt: any;
   timeout_count = 0;
   threshold_timeout = Math.round(300_000 / 1_500);
+  // threshold_timeout = 2;
+  timeout_page = false;
 
   get is_single_name() {
     return this.is_single ? "Only one payment" : "Accept multiple payments";
@@ -190,6 +194,7 @@ export class Tab1Page implements OnInit, OnDestroy {
     if (!this.compare_receipt(this.old_receipt, new_receipt)) {
       // console.log("Receipt change: ", this.compare_receipt(this.old_receipt, new_receipt));
       this.curr_receipt = new_receipt;
+      this.miscSvc.mod_receipt(this.curr_receipt);
       this.receipt_updated = true;
       this.stop_detect_receipt();
     }
@@ -219,6 +224,13 @@ export class Tab1Page implements OnInit, OnDestroy {
   // reset if no pay within 5 minutes.
   reset_if_no_pay() {
     this.stop_detect_receipt();
+    this.timeout_page = true;
+  }
+
+  reset_timeout() {
+    this.timeout_page = false;
+    this.curr_receipt = null;
+    this.unlock_price();
   }
 
   // =======================================
@@ -237,5 +249,8 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   // debug_set_old() {
   //   this.curr_receipt = this.old_receipt;
+  //   this.miscSvc.mod_receipt(this.curr_receipt);
+  //   this.receipt_updated = true;
+  //   this.stop_detect_receipt();
   // }
 }

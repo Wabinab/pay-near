@@ -61,7 +61,9 @@ You should see now the new page, with this button below:
 
 At the bottom, you can see "Only one payment". If you deactivate the button, it'll say "Accept multiple payments". What that means is, when you accept only a single payment, and the payee pay, it'll check for changes and redirect you to the receipt page upon completion. If you instead have multiple payees, then this redirection isn't supported. You'll have to manually unlock it afterwards and manually check with each payee whether they have made the transactions in your receiving wallet's transaction history. 
 
-(Note: if you detect for payment, it'll have a timeout of 5 minutes. If nothing is paid within 5 minutes, it'll timeout.)
+(Note: if you detect for payment, it'll have a timeout of 5 minutes. If nothing is paid within 5 minutes, it'll timeout. Example like image below:)
+
+![Timeout page](./readme_assets/image4.png)
 
 Here's an image showing what it looks like for a single payment, upon transaction succeeded. 
 
