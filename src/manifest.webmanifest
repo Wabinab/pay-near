@@ -1,6 +1,6 @@
 {
-  "name": "pay-near",
-  "short_name": "pay-near",
+  "name": "pay-near-testnet",
+  "short_name": "pay-near-testnet",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",

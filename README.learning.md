@@ -83,7 +83,24 @@ That's why we stop the android app development. Instead, we implement it as a pw
 ### Compiling
 From project base: 
 
+(For production)
+- Remember to change to `mainnet` in `login-wallet.service.ts`
+- Change name at `mainfest.webmanifest`
+- Then run the code below: 
+
 ```bash
 ionic build --prod -- --base-href /pay-near/ &&
 ng deploy --no-build --dir=www --base-href=/pay-near/
 ```
+
+(For testnet/development/testing)
+- Remember to change to `testnet` in `login-wallet.service.ts`
+- Change name at `manifest.webmanifest`
+- Then run the code below: 
+
+```bash
+ionic build --prod -- --base-href /pay-near-testnet/ &&
+GH_TOKEN=your_personal_access_key ng deploy --repo=https://github.com/Wabinab/pay-near-testnet.git --no-build --dir=www --base-href=/pay-near-testnet/ 
+```
+
+That's when you use github codespace, where they set a deploy key instead of personal access key, so it doesn't work pushing to another repo. Hence, you could temporarily override it with `GH_TOKEN=your_personal_access_key`. 
