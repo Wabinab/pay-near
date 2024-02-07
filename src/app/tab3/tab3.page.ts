@@ -4,6 +4,7 @@ import { utils } from 'near-api-js';
 import { Swiper } from 'swiper/types';
 import type { EChartsOption } from 'echarts';
 import { TitleCasePipe } from '@angular/common';
+import { MiscService } from '../services/misc.service';
 
 @Component({
   selector: 'app-tab3',
@@ -18,12 +19,31 @@ export class Tab3Page implements OnInit {
   month_unit: string;
   year_unit: string = "";
 
-  constructor(private walletSvc: LoginWalletService, private titlePipe: TitleCasePipe) {}
+  constructor(private walletSvc: LoginWalletService, private titlePipe: TitleCasePipe, 
+    private miscSvc: MiscService) {}
 
   ngOnInit() {
     this.month_unit = "";
     setTimeout(() => this.refresh_actions(), 1000);
   }
+
+  // ionViewDidEnter() {
+  //   document.addEventListener(
+  //     "touchstart",
+  //     (e) => this.miscSvc.swipeStart(e),
+  //     false
+  //   );
+  //   document.addEventListener(
+  //     "touchend",
+  //     (e) => this.miscSvc.swipeEnd(e),
+  //     false
+  //   );
+  // }
+
+  // ionViewWillLeave() {
+  //   document.removeEventListener("touchstart", (e) => this.miscSvc.swipeStart(e), false);
+  //   document.removeEventListener("touchend", (e) => this.miscSvc.swipeEnd(e), false);
+  // }
 
   async handle_refresh(event: any) {
     await this.refresh_actions();

@@ -8,6 +8,8 @@ import { ExploreContainerComponentModule } from '../explore-container/explore-co
 import { Tab1PageRoutingModule } from './tab1-routing.module';
 import { QRCodeModule } from 'angularx-qrcode';
 import { Vibration } from '@ionic-native/vibration/ngx';
+import { QrcodeModalComponent } from './qrcode-modal/qrcode-modal.component';
+import { Brightness } from '@ionic-native/brightness/ngx';
 
 @NgModule({
   imports: [
@@ -17,9 +19,9 @@ import { Vibration } from '@ionic-native/vibration/ngx';
     ReactiveFormsModule,
     ExploreContainerComponentModule,
     Tab1PageRoutingModule,
-    QRCodeModule
+    QRCodeModule,
   ],
-  declarations: [Tab1Page],
-  providers: [Vibration]
+  declarations: [Tab1Page, QrcodeModalComponent],
+  providers: [Vibration, Brightness]
 })
 export class Tab1PageModule {}

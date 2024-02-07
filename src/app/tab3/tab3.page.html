@@ -1,3 +1,9 @@
+<!-- To push the banner down. -->
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+  </ion-toolbar>
+</ion-header>
+
 <!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title slot="start">Stats</ion-title>
@@ -37,6 +43,9 @@
             <ion-card-content>
               <ng-template [ngTemplateOutlet]="graphTemplate" 
                 [ngTemplateOutletContext]="{ $implicit: seg }">
+                <ion-refresher (ionRefresh)="handle_refresh($event)">
+                  <ion-refresher-content></ion-refresher-content>
+                </ion-refresher>
               </ng-template>
             </ion-card-content>
           </ion-card>
@@ -55,13 +64,13 @@
     Charts not loaded. Pull down to refresh. 
   </p>
   <div echarts [options]="month_option">
-    <ion-refresher slot="fixed" (ionRefresh)="handle_refresh($event)">
+    <!-- <ion-refresher slot="fixed" (ionRefresh)="handle_refresh($event)">
       <ion-refresher-content></ion-refresher-content>
-    </ion-refresher>
+    </ion-refresher> -->
   </div>
   <div echarts [options]="year_option">
-    <ion-refresher slot="fixed" (ionRefresh)="handle_refresh($event)">
+    <!-- <ion-refresher slot="fixed" (ionRefresh)="handle_refresh($event)">
       <ion-refresher-content></ion-refresher-content>
-    </ion-refresher>
+    </ion-refresher> -->
   </div>
 </ng-template>

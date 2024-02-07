@@ -3,7 +3,12 @@
     <ion-buttons slot="start">
       <ion-button size="large" class="custom" (click)="change_net()" disabled>{{ net_name }}</ion-button>
     </ion-buttons>
-    <ion-title slot="end">{{ account_id }}</ion-title>
+    <ion-title class="text-center">{{ miscSvc.alter_name(account_id) }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button size="large" class="custom" (click)="hard_refresh()">
+        <ion-icon aria-hidden="true" name="reload"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

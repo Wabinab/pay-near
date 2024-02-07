@@ -4,7 +4,8 @@ import { AccountState, Network, NetworkId, setupWalletSelector } from "@near-wal
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupLedger } from '@near-wallet-selector/ledger';
 import { setupHereWallet } from '@near-wallet-selector/here-wallet';
-// import { setupWalletConnect } from "@near-wallet-selector/wallet-connect";
+import { setupMintbaseWallet } from "@near-wallet-selector/mintbase-wallet";
+import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
 import { ToastService } from './toast.service';
 import { Contract, providers } from 'near-api-js';
 
@@ -23,6 +24,7 @@ export class LoginWalletService {
   contract_id_mainnet: string = 'pay_near.near';
   contract_id_testnet: string = 'pay_testnet.testnet';
   // contract: any | null = null;
+  callback_url = "https://wabinab.github.io/pay-near"
 
   constructor(private toastSvc: ToastService) {
     setTimeout(() => this.setup(), 500);
@@ -45,12 +47,28 @@ export class LoginWalletService {
   }
 
   async setup() {
+    // const dAppMetadata: DAppMetadata = { name: '', logoUrl: '', url: this.callback_url };
+
     this.selector = await setupWalletSelector({
       network: this.network,
       modules: [
+        // setupMyNearWallet({
+        //   successUrl: this.callback_url,
+        //   failureUrl: this.callback_url
+        // }),
         setupMyNearWallet(),
         setupLedger(),
         setupHereWallet(),  
+        // setupMintbaseWallet(),
+        // setupNearMobileWallet(),
+        // setupMintbaseWallet({
+        //   callbackUrl: this.callback_url
+        // }),
+        setupNearMobileWallet({ dAppMetadata: {
+          name: "Pay Near", 
+          logoUrl: "https://github.com/near/wallet-selector/blob/main/packages/near-mobile-wallet/assets/icon.png", 
+          url: this.callback_url
+        }}),
       ]
     });
     // if (this.network == 'mainnet') {
@@ -65,6 +83,10 @@ export class LoginWalletService {
       contractId: this.contract_id
     });
 
+    if ((window as any).localStorage['near_app_wallet_auth_key'] == undefined) {
+      (window as any).localStorage['near_app_wallet_auth_key'] = '{}';
+    }
+
     if (this.selector.isSignedIn()) {
       this.state = this.selector.store.getState();
       this.get_account_id();
@@ -77,6 +99,9 @@ export class LoginWalletService {
 
   show_wallet() {
     if (this.modalWallet == undefined) this.setup();
+    if ((window as any).localStorage['near_app_wallet_auth_key'] == undefined) {
+      (window as any).localStorage['near_app_wallet_auth_key'] = '{}';
+    }
     // console.log(this.modalWallet);
     // console.warn(this.selector);
     this.modalWallet.show();

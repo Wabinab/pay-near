@@ -13,6 +13,11 @@ ion-input.custom {
     
 }
 
+.timeout-icon {
+    font-size: 18vmin;
+    color: rgb(216, 71, 71);
+}
+
 // .container-center {
 //     display: flex;
 //     flex-direction: column;
@@ -21,3 +26,7 @@ ion-input.custom {
 // .child { 
 //     flex-grow: 1; 
 // }
+
+ion-button.custom {
+    --background-hover: white !important;
+}

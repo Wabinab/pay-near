@@ -5,6 +5,11 @@ import { Vibration } from '@ionic-native/vibration/ngx';
 import { ToastService } from '../services/toast.service';
 import { utils } from 'near-api-js';
 import { Subscription, interval } from 'rxjs';
+import { MiscService } from '../services/misc.service';
+import { IonModal, ModalController } from '@ionic/angular';
+import { QrcodeModalComponent } from './qrcode-modal/qrcode-modal.component';
+import { Brightness } from '@ionic-native/brightness/ngx';
+import { ScreenBrightness } from '@capacitor-community/screen-brightness';
 
 
 @Component({
@@ -23,7 +28,9 @@ export class Tab1Page implements OnInit, OnDestroy {
   receipt_activated: boolean = true;  // button not display initially. 
 
   constructor(private fb: FormBuilder, private walletSvc: LoginWalletService,
-    private vibration: Vibration, private toastSvc: ToastService) {}
+    private vibration: Vibration, private toastSvc: ToastService, 
+    private miscSvc: MiscService, private modalCtrl: ModalController,
+    private brightness: Brightness) {}
 
   ngOnInit() {
     this.myForm = this.fb.group({
@@ -34,7 +41,7 @@ export class Tab1Page implements OnInit, OnDestroy {
     this.source = interval(this.single_interval);
     setTimeout(() => this.refresh_fn(), 1000);
 
-    setInterval(() => this.log_offset(), 1500);
+    // setInterval(() => this.log_offset(), 1500);
   }
 
   ngOnDestroy(): void {
@@ -72,6 +79,10 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   get qr_data() {
     return `${this.account_id} ${this.myForm.get('price')!.value.toString()}`;
+  }
+
+  get qr_data_simplified() {
+    return `${this.miscSvc.alter_name(this.account_id)} ${this.myForm.get('price')!.value.toString()}`;
   }
 
   get qr_error() {
@@ -143,8 +154,11 @@ export class Tab1Page implements OnInit, OnDestroy {
   is_single: boolean = true;  
   old_receipt: any;
   receipt_updated: boolean = false;
+  curr_receipt: any;
   timeout_count = 0;
   threshold_timeout = Math.round(300_000 / 1_500);
+  // threshold_timeout = 2;
+  timeout_page = false;
 
   get is_single_name() {
     return this.is_single ? "Only one payment" : "Accept multiple payments";
@@ -167,6 +181,11 @@ export class Tab1Page implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  clear_txhash() {
+    this.unlock_price();
+    this.curr_receipt = null;
+  }
+
   async _receipt_changed() {
     // console.log("receipt change called");
     if (this.account_id === "") {
@@ -180,8 +199,11 @@ export class Tab1Page implements OnInit, OnDestroy {
       "account": this.account_id
     });
 
-    // console.log(this.compare_receipt(this.old_receipt, new_receipt));
+    // console.log("Receipt before change: ", this.compare_receipt(this.old_receipt, new_receipt));
     if (!this.compare_receipt(this.old_receipt, new_receipt)) {
+      // console.log("Receipt change: ", this.compare_receipt(this.old_receipt, new_receipt));
+      this.curr_receipt = new_receipt;
+      this.miscSvc.mod_receipt(this.curr_receipt);
       this.receipt_updated = true;
       this.stop_detect_receipt();
     }
@@ -211,19 +233,74 @@ export class Tab1Page implements OnInit, OnDestroy {
   // reset if no pay within 5 minutes.
   reset_if_no_pay() {
     this.stop_detect_receipt();
+    this.timeout_page = true;
+  }
+
+  reset_timeout() {
+    this.timeout_page = false;
+    this.curr_receipt = null;
+    this.unlock_price();
   }
 
   // =======================================
-  log_offset() {
-    // var top = document.getElementById('container-top')?.offsetTop;
-    // var center = document.getElementById('container-center')?.offsetTop;
-    // var bottom = document.getElementById('container-bottom')?.offsetTop;
-    // console.log(`Top: ${top}\nCenter: ${center}\nBottom: ${bottom}`);
-  }
+  // log_offset() {
+  //   // var top = document.getElementById('container-top')?.offsetTop;
+  //   // var center = document.getElementById('container-center')?.offsetTop;
+  //   // var bottom = document.getElementById('container-bottom')?.offsetTop;
+  //   // console.log(`Top: ${top}\nCenter: ${center}\nBottom: ${bottom}`);
+  // }
 
   get imageHeight() {
     var center = document.getElementById('container-center')?.offsetTop ?? 0;
     var bottom = document.getElementById('container-bottom')?.offsetTop ?? 300;
     return Math.round(bottom * 0.9) - center;
   }
+
+  // debug_set_old() {
+  //   this.curr_receipt = this.old_receipt;
+  //   this.miscSvc.mod_receipt(this.curr_receipt);
+  //   this.receipt_updated = true;
+  //   this.stop_detect_receipt();
+  // }
+
+  // =======================================
+  // Zoom in QR Code Modal
+
+  async openModal() {
+    const modal = await this.modalCtrl.create({
+      component: QrcodeModalComponent,
+      componentProps: {
+        qr_data: this.qr_data
+      },
+    });
+    modal.present();
+    const curr_brightness = await this.brightness.getBrightness();
+    this.brightness.setBrightness(1);
+
+    modal.onDidDismiss().then(() => {
+      if (curr_brightness >= 0 && curr_brightness <= 1) this.brightness.setBrightness(curr_brightness);
+      else this.toastSvc.present_toast(`Get original brightness failed: ${curr_brightness}`, "top", "bg-danger", 5000);
+    }, (err) => {
+      this.toastSvc.present_toast(`Please report error: "qrcode modal dismiss: ${err}"`, "top", "bg-danger", 5000);
+    })
+  }
+
+  // curr_bright: number;
+  // async max_brightness() {
+  //   // this.brightness.getBrightness().then(res => {
+  //   //   this.curr_bright = res;
+  //   //   this.brightness.setBrightness(1);
+  //   // });
+  //   const brightness = 1;
+  //   await ScreenBrightness.setBrightness({ brightness });
+  // }
+
+  // async reset_brightness() {
+  //   // if (this.curr_bright >= 0 && this.curr_bright <= 1) this.brightness.setBrightness(this.curr_bright);
+  //   const brightness = -1;
+  //   await ScreenBrightness.setBrightness({ brightness });
+  // }
+
+  
 }
+
