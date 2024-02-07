@@ -5,13 +5,10 @@ This mobile app is designed to make payments in NEAR protocol by scanning a qrco
 - It charges maximum 0.025N for every payment, or 0.1% if less than 25N. 
 - Rather than just scan the code and type the value yourself (like most qrcode in wallet app), you'd have the receiver type the amount, the payer don't need to type the amount in. 
 - And some other stuffs not of significance. 
-- Supports MyNearWallet (web) and HERE wallet. Unfortunately, NEAR mobile wallet failed during testing, so one disabled it. HERE wallet requires an older version to work, as an update in january 2024 make signing smart contract to pop up with problems that one can't fix. Ultimately, only MyNearWallet works well. Other wallet like extension that aren't really mobile-based aren't supported. Though, if you found something new, do open an issue and one'll check whether to add it for support or not. 
-
-NOTE: This is a failed entry. Reason? Somehow, it can't login on mobile. 
 
 ---
 # How To Install
-No installation required. Just visit `https://wabinab.github.io/pay-near` from your browser and it'll be available. It may prompt you to install the app, and you could choose to do so. However, note that this prompt doesn't always comes out, especially in situations where: 
+No installation required. Just visit [https://wabinab.github.io/pay-near](https://wabinab.github.io/pay-near) from your browser and it'll be available. It may prompt you to install the app, and you could choose to do so. However, note that this prompt doesn't always comes out, especially in situations where: 
 - You have an older phone, hence an older browser app. 
 - You have an older browser app. 
 - You use untested app (like duckduckgo, tor, etc.) to browse that one isn't familiar of its workings. 
