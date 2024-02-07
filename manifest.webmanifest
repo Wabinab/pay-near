@@ -1,6 +1,6 @@
 {
-  "name": "app",
-  "short_name": "app",
+  "name": "pay-near",
+  "short_name": "pay-near",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
