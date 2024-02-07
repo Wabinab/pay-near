@@ -53,6 +53,11 @@ export class TabsPage {
     // this.walletSvc.change_network();
   }
 
+  hard_refresh() {
+    (window as any).location.reload();
+    return;
+  }
+
   // ============================================================
   // show_here_wallet() {
   //   this.hereSvc.login();

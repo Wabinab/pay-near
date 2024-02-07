@@ -49,6 +49,16 @@ After login, you can set your payment amount in the middle. Here, we set to 12.5
 
 The **unlock** button will get you back to the previous page. Note: **clicking the unlock button will vibrate the phone**. This ensures the payee doesn't do magic and secretly change the amount when you show him the QR code. 
 
+---
+##### QR Code Too Small
+**You can tap on the QR code, and it'll zoom in.** Unfortunately, because it's a web app, one can't help you change phone screen brightness to max. If your screen is too dark, **ensure you up the brightness manually**. 
+
+![Alt text](./readme_assets/image6.png)
+
+Tapping anywhere on the screen will dismiss the zoomed-in QR code. 
+
+---
+
 See the "(right button) To display receipt when someone paid." text, and the button that looks like the receipt right of the lock/unlock? Usually, only the person who's performing the transaction (i.e. the payee) will receive some return value after he made the transaction, and you won't know about it. This is the button to make you know about it. 
 
 **Activate receipt fee: 0.1 N**
@@ -82,6 +92,35 @@ The gray button below is to **deactivate camera**, if you don't want to scan any
 
 Upon scanning success, it'll redirect you the transaction page. Check that it's calling `transfer` from more information, and it's getting to the correct address `pay-near.near` or `pay-testnet.testnet`, and check the amount is correct, then proceed. Upon finish, you'll be redirected back, and display a receipt. 
 
+![After payment](./readme_assets/image5.png)
+
+(Note: the image above would be fixed again, to move the thingy down a bit so the "Receipt" isn't hidden, and to shorten the name.)
+
+**If you encounter "Failed to Fetch" from My Near Wallet when approving transaction**, the website is probably updating itself... Come back in a few minutes... Unfortunately, when Github Actions is building the page, it doesn't show anything on the page saying the page is updating. 
+
+Tap dismiss to dismiss the receipt. 
+
+### Stats
+Stats requires **0.75 N** to activate. 
+
+![Stats Not Activated](./readme_assets/image7.png)
+
+![After activated](./readme_assets/image8.png)
+
+**Any transaction made before activate stats would not be recorded.**
+
+It has four graphs, two for spendings, and two for earnings, as the tab above indicates. Each two graph represents spending by months and spending by years. It'll record what data from the last 12 months, and last 10 years. Anything older than that would be gone forever. 
+
+By last 12 months one literally means "last 12 months". E.g. now is Feb 2024, so it'll record anything from Feb 2023 to Feb 2024. Anything before is erased, meaning Jan 2023 won't be in database anymore. Here, we can only see 02/2024 because anything before doesn't have data. If we have data starting, say, at 12/2023, then it'll display 12/2023, 01/2024, and 02/2024 only. 
+
+![Example with graph](./readme_assets/image9.png)
+
+##### Hard Refresh
+Note the header now have a refresh button at top right. It's a hard refresh (different from pulling down refresh). It'll reload the whole website. 
+
+The pull-down refresh for graph is only available in mobile web format. If you use it on desktop web, it won't work in most cases. 
 
 ### Logout/Sign Out
 Logout just double press that button, and it should work for all except Near Mobile Wallet (because you need to go to Near Mobile Wallet app to give it permission to sign out, so double sign out). 
+
+Voilà! End of Tutorial. 

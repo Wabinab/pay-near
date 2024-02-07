@@ -9,6 +9,7 @@ import { MiscService } from '../services/misc.service';
 import { IonModal, ModalController } from '@ionic/angular';
 import { QrcodeModalComponent } from './qrcode-modal/qrcode-modal.component';
 import { Brightness } from '@ionic-native/brightness/ngx';
+import { ScreenBrightness } from '@capacitor-community/screen-brightness';
 
 
 @Component({
@@ -284,17 +285,21 @@ export class Tab1Page implements OnInit, OnDestroy {
     })
   }
 
-  curr_bright: number;
-  max_brightness() {
-    this.brightness.getBrightness().then(res => {
-      this.curr_bright = res;
-      this.brightness.setBrightness(1);
-    });
-  }
+  // curr_bright: number;
+  // async max_brightness() {
+  //   // this.brightness.getBrightness().then(res => {
+  //   //   this.curr_bright = res;
+  //   //   this.brightness.setBrightness(1);
+  //   // });
+  //   const brightness = 1;
+  //   await ScreenBrightness.setBrightness({ brightness });
+  // }
 
-  reset_brightness() {
-    if (this.curr_bright >= 0 && this.curr_bright <= 1) this.brightness.setBrightness(this.curr_bright);
-  }
+  // async reset_brightness() {
+  //   // if (this.curr_bright >= 0 && this.curr_bright <= 1) this.brightness.setBrightness(this.curr_bright);
+  //   const brightness = -1;
+  //   await ScreenBrightness.setBrightness({ brightness });
+  // }
 
   
 }

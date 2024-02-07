@@ -67,7 +67,6 @@ export class Tab2Page implements OnInit {
       amount: yocto_amt
     }, yocto_amt ?? "0");
     this.miscSvc.mod_receipt(this.receipt);
-    // console.warn(this.receipt);
   }
 
   private async load_txhash() {
@@ -75,7 +74,7 @@ export class Tab2Page implements OnInit {
     // console.log(txhash);
     if (txhash) {
       this.receipt = await this.walletSvc.getTxRes(txhash);
-      // console.warn(this.receipt);
+      this.miscSvc.mod_receipt(this.receipt);
     }
   }
 
