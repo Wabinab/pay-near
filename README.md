@@ -8,18 +8,19 @@ This mobile app is designed to make payments in NEAR protocol by scanning a qrco
 
 ---
 # How To Install
-No installation required. Just visit [https://wabinab.github.io/pay-near](https://wabinab.github.io/pay-near) from your browser and it'll be available. It may prompt you to install the app, and you could choose to do so. However, note that this prompt doesn't always comes out, especially in situations where: 
+No installation required. Just visit 
+- [https://wabinab.github.io/pay-near for mainnet](https://wabinab.github.io/pay-near)
+- [https://wabinab.github.io/pay-near-testnet for testnet](https://wabinab.github.io/pay-near-testnet)
+ from your browser. It may prompt you to install the app, and you could choose to do so. However, note that this prompt doesn't always comes out, especially in situations where: 
 - You have an older phone, hence an older browser app. 
 - You have an older browser app. 
 - You use untested app (like duckduckgo, tor, etc.) to browse that one isn't familiar of its workings. 
 
-In these case, you either have to tolerate for using it only on browser, or find out how to get a newer version, esp. of the app. E.g. modern browser app, if you open up the hamburger menu (the thingy with three horizontal lines), it has "Add to Phone" or "Add to Home" functionality that saves a page to home, either browse like a local app, or acts as a shortcut. Either way, you don't have to type the url every time to visit it. Easy! 
+In these case, you either have to tolerate for using it only on browser, or find out how to get a newer app version. Most modern browser have "Add to Phone", "Add to Home (screen)" which makes it either app-like, or as a shortcut. 
 
-Note: in newer phones, the installation isn't always success, esp. if you use a phone that has by default, **turn off-ed permission**, which is true for some phones from China, like my Redmi. In that case, the installation doesn't work. How'd one fixed that? 
-- Well, one used its native browser app rather than Microsoft Edge to do the installation. Of course, the native app is a shortcut rather than local installation type, so one'll have to bear with it. 
-- Another way is one keep it open as a tab inside my Edge app, so one can just click on that tab. 
+Note: if you use phones that turn off permission by default, especially phones from China, you'd need to open the permissions before you can install app. And that doesn't guarantee the installation will be successful, like in one's case. So one just keep the tab open in a web browser. 
 
-If you're free to help me see why, the APK is available here: [https://github.com/Wabinab/pay-near/releases/tag/0.4.1](https://github.com/Wabinab/pay-near/releases/tag/0.4.1), the well-known file [here](https://wabinab.github.io/.well-known/assetlinks.json). It does works with the `adb shell am start` thingy tried on debug version (with a different SHA256 one suppose) with android studio; yet not on release version. I wonder why, oh, I wonder why...!!!
+Why not local APK? Somehow, deep-link doesn't work. If you have time, could check it here: [https://github.com/Wabinab/pay-near/releases/tag/0.4.1](https://github.com/Wabinab/pay-near/releases/tag/0.4.1), the well-known file [here](https://wabinab.github.io/.well-known/assetlinks.json). It does works with the `adb shell am start` thingy tried on debug version (with a different SHA256 one suppose) with android studio; yet not on release version. I wonder why, oh, I wonder why...!!!
 
 ---
 # How To Use
